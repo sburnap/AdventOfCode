@@ -1,6 +1,9 @@
-from typing import Any
+from typing import Any, Callable
 import pathlib
+import datetime
 from enum import Enum
+
+AocFunction = Callable[[str], int]
 
 
 class Day:
@@ -10,10 +13,10 @@ class Day:
         self,
         year: int,
         day: int,
-        test_one,
-        test_two,
-        part_one,
-        part_two,
+        test_one: AocFunction,
+        test_two: AocFunction,
+        part_one: AocFunction,
+        part_two: AocFunction,
         test_input: Any,
         input=InType.INPUT_ONE_LINE_STR,
     ):
@@ -27,11 +30,13 @@ class Day:
         self.part_one = part_one
         self.part_two = part_two
 
-    def one_line_input(self):
-        return open(self.dir / "input.txt").readlines()[0].strip()
-
     def multi_line_input(self):
         return [line.strip() for line in open(self.dir / "input.txt")]
+
+    def one_line_input(self):
+        input = self.multi_line_input()
+        assert len(input) == 1
+        return input[0]
 
     def header(self):
         print()
@@ -42,23 +47,31 @@ class Day:
 
         if type(self.test_input) == list:
             for input in self.test_input:
-                answer = fn(self, input)
+                start = datetime.datetime.now()
+                answer = fn(input)
+                elapsed = datetime.datetime.now() - start
                 print(
-                    f"Test: {answer if answer is not None else 'None':<10} <- [ {input} ]"
+                    f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {input} ]"
                 )
 
     def run_it(self, fn, name: str) -> None:
         match self.input:
             case self.InType.INPUT_ONE_LINE_STR:
-                answer = fn(self, self.one_line_input())
+                start = datetime.datetime.now()
+                answer = fn(self.one_line_input())
+                elapsed = datetime.datetime.now() - start
 
             case self.InType.INPUT_MULTI_LINE_STR:
-                answer = fn(self, self.multi_line_input())
+                start = datetime.datetime.now()
+                answer = fn(self.multi_line_input())
+                elapsed = datetime.datetime.now() - start
 
             case _:
-                answer = "Can't deal with this input"
+                start = datetime.datetime.now()
+                answer = fn(self.input)
+                elapsed = datetime.datetime.now() - start
 
-        print(f"Answer for {name} is {answer}")
+        print(f"({elapsed}) Answer for {name} is {answer}")
 
     def run_all(self, run_tests=False):
         self.header()

@@ -1,0 +1,32 @@
+import aoc_utils as au
+
+
+def test_one(test_input: str) -> int:
+    return "I dunno"
+
+
+def part_one(input: list[str]) -> int:
+    return "I dunno"
+
+
+def test_two(test_input: str) -> int:
+    return "I dunno"
+
+
+def part_two(input: list[str]) -> int:
+    return "I dunno"
+
+
+if __name__ == "__main__":
+    day = au.Day(
+        $year$,
+        $day$,
+        test_one,
+        test_two,
+        part_one,
+        part_two,
+        input=None,
+        test_input=None,
+    )
+
+    day.run_all(run_tests=True)

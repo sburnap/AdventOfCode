@@ -24,19 +24,19 @@ def calculate_floor(input: str) -> tuple[int, Optional[int]]:
     return floor, basement
 
 
-def test_one(day: au.Day, test_input):
+def test_one(test_input):
     return calculate_floor(test_input)[0]
 
 
-def part_one(day: au.Day, input):
+def part_one(input):
     return calculate_floor(input)[0]
 
 
-def test_two(day: au.Day, test_input):
+def test_two(test_input):
     return calculate_floor(test_input)[1]
 
 
-def part_two(day: au.Day, input):
+def part_two(input):
     return calculate_floor(input)[1]
 
 

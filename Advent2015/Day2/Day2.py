@@ -15,11 +15,11 @@ def calc_paper(box_size: str) -> int:
     return sum(sides) + min(sides) // 2
 
 
-def test_one(day: au.Day, test_input: str) -> int:
+def test_one(test_input: str) -> int:
     return calc_paper(test_input)
 
 
-def part_one(day: au.Day, input: list[str]) -> int:
+def part_one(input: list[str]) -> int:
     return sum(calc_paper(paper_def) for paper_def in input)
 
 
@@ -28,11 +28,11 @@ def calc_ribbon(box_size: str) -> int:
     return 2 * sides[0] + 2 * sides[1] + reduce(operator.mul, sides, 1)
 
 
-def test_two(day: au.Day, test_input: str) -> int:
+def test_two(test_input: str) -> int:
     return calc_ribbon(test_input)
 
 
-def part_two(day: au.Day, input: list[str]) -> int:
+def part_two(input: list[str]) -> int:
     return sum(calc_ribbon(paper_def) for paper_def in input)
 
 

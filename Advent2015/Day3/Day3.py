@@ -40,19 +40,19 @@ def count_houses(directions: str, n: int) -> int:
     return len(houses)
 
 
-def test_one(day: au.Day, test_input: str) -> int:
+def test_one(test_input: str) -> int:
     return count_houses(test_input, 1)
 
 
-def part_one(day: au.Day, input: str) -> int:
+def part_one(input: str) -> int:
     return count_houses(input, 1)
 
 
-def test_two(day: au.Day, test_input: str) -> int:
+def test_two(test_input: str) -> int:
     return count_houses(test_input, 2)
 
 
-def part_two(day: au.Day, input: str) -> int:
+def part_two(input: str) -> int:
     return count_houses(input, 2)
 
 
@@ -66,6 +66,6 @@ if __name__ == "__main__":
         part_two,
         input=au.Day.InType.INPUT_ONE_LINE_STR,
         test_input=[">", "^>v<", "^v^v^v^v^v", "^v"],
-    )
+    ).run_all(run_tests=True)
 
     day.run_all(run_tests=True)
