@@ -51,7 +51,9 @@ class Day:
                 answer = fn(input)
                 elapsed = datetime.datetime.now() - start
                 print(
-                    f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {input} ]"
+                    f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {input} ]"[
+                        :100
+                    ]
                 )
             print()
 
