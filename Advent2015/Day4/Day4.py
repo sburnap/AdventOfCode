@@ -19,7 +19,7 @@ def test_one(test_input: str) -> int:
     return find_hash_num(test_input, 5)
 
 
-def part_one(input: list[str]) -> int:
+def part_one(input: str) -> int:
     return find_hash_num(input, 5)
 
 
@@ -27,7 +27,7 @@ def test_two(test_input: str) -> int:
     return find_hash_num(test_input, 6)
 
 
-def part_two(input: list[str]) -> int:
+def part_two(input: str) -> int:
     return find_hash_num(input, 6)
 
 

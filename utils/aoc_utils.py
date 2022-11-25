@@ -53,6 +53,7 @@ class Day:
                 print(
                     f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {input} ]"
                 )
+            print()
 
     def run_it(self, fn, name: str) -> None:
         match self.input:
