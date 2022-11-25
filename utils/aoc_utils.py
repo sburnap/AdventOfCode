@@ -1,9 +1,10 @@
 from typing import Any
 import pathlib
+from enum import Enum
 
 
 class Day:
-    INPUT_ONE_LINE_STR = 1
+    InType = Enum("InType", ["INPUT_ONE_LINE_STR", "INPUT_MULTI_LINE_STR"])
 
     def __init__(
         self,
@@ -14,7 +15,7 @@ class Day:
         part_one,
         part_two,
         test_input: Any,
-        input=INPUT_ONE_LINE_STR,
+        input=InType.INPUT_ONE_LINE_STR,
     ):
         self.year = year
         self.day = day
@@ -27,7 +28,10 @@ class Day:
         self.part_two = part_two
 
     def one_line_input(self):
-        return open(self.dir / "input.txt").readlines()[0]
+        return open(self.dir / "input.txt").readlines()[0].strip()
+
+    def multi_line_input(self):
+        return [line.strip() for line in open(self.dir / "input.txt")]
 
     def header(self):
         print()
@@ -45,8 +49,14 @@ class Day:
 
     def run_it(self, fn, name: str) -> None:
         match self.input:
-            case self.INPUT_ONE_LINE_STR:
-                answer = fn(self)
+            case self.InType.INPUT_ONE_LINE_STR:
+                answer = fn(self, self.one_line_input())
+
+            case self.InType.INPUT_MULTI_LINE_STR:
+                answer = fn(self, self.multi_line_input())
+
+            case _:
+                answer = "Can't deal with this input"
 
         print(f"Answer for {name} is {answer}")
 
@@ -55,6 +65,7 @@ class Day:
         if run_tests:
             self.test_it(self.test_one)
         self.run_it(self.part_one, "Part One")
+        print()
         if run_tests:
             self.test_it(self.test_two)
         self.run_it(self.part_two, "Part Two")

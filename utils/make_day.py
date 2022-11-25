@@ -20,7 +20,7 @@ import click
 def make_day(day: int, year: int, input_data: pathlib.Path, force: bool) -> None:
     target = pathlib.Path(".", f"Advent{year}", f"Day{day}")
     os.makedirs(target, exist_ok=True)
-    if not force and os.path.isfile(target / input_data):
+    if not force and os.path.isfile(target / "input.txt"):
         print(f"Input data already exists in {target}, ignoring (-f to force)")
     else:
         shutil.copy(input_data, target)
