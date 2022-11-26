@@ -25,7 +25,7 @@ def parse_input(input: str) -> Optional[tuple[str, Rect]]:
 
         return rc
 
-    return None
+    raise Exception(f"Improper input {input} seen")
 
 
 PerformFunc = Callable[[list[list[int]], int, int, str], None]
