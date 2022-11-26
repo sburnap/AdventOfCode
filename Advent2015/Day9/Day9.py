@@ -8,10 +8,10 @@ def get_distances(input: str) -> dict:
     for source, destination, distance in input:
         if source not in distances:
             distances[source] = {}
-        distances[source][destination] = int(distance)
+        distances[source][destination] = distance
         if destination not in distances:
             distances[destination] = {}
-        distances[destination][source] = int(distance)
+        distances[destination][source] = distance
 
     return distances
 
@@ -46,7 +46,9 @@ def part_two(input: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    distance_parser = au.RegexParser(["(.*) to (.*) = (.*)"])
+    distance_parser = au.RegexParser(
+        ["(.*) to (.*) = (.*)"], lambda x: (x[0], x[1], int(x[2]))
+    )
     day = au.Day(
         2015,
         9,

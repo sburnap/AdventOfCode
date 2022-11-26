@@ -13,21 +13,6 @@ class Rect:
     y2: int
 
 
-def parse_input(input: str) -> Optional[tuple[str, Rect]]:
-
-    in_line_re = re.compile(r"(.*) (\d*),(\d*) through (\d*),(\d*)")
-    if m := in_line_re.match(input):
-
-        rc = (
-            str(m.group(1)),
-            Rect(int(m.group(2)), int(m.group(3)), int(m.group(4)), int(m.group(5))),
-        )
-
-        return rc
-
-    raise Exception(f"Improper input {input} seen")
-
-
 PerformFunc = Callable[[list[list[int]], int, int, str], None]
 
 
@@ -52,12 +37,12 @@ def brute(commands: list[Optional[tuple[str, Rect]]], fn):
     return sum([sum([light for light in line]) for line in lights])
 
 
-def test_one(test_input: list[str]) -> int:
-    return brute([parse_input(command) for command in test_input], perform_part_one)
+def test_one(input: list[str]) -> int:
+    return brute(input, perform_part_one)
 
 
 def part_one(input: list[str]) -> int:
-    return brute([parse_input(command) for command in input], perform_part_one)
+    return brute(input, perform_part_one)
 
 
 def perform_part_two(lights: list[list[int]], x: int, y: int, instruction: str) -> None:
@@ -71,15 +56,20 @@ def perform_part_two(lights: list[list[int]], x: int, y: int, instruction: str) 
             lights[x][y] += 2
 
 
-def test_two(test_input: list[str]) -> int:
-    return brute([parse_input(command) for command in test_input], perform_part_two)
+def test_two(input: list[str]) -> int:
+    return brute(input, perform_part_two)
 
 
 def part_two(input: list[str]) -> int:
-    return brute([parse_input(command) for command in input], perform_part_two)
+    return brute(input, perform_part_two)
 
 
 if __name__ == "__main__":
+    command_parser = au.RegexParser(
+        ["(.*) (\d*),(\d*) through (\d*),(\d*)"],
+        lambda x: (str(x[0]), Rect(int(x[1]), int(x[2]), int(x[3]), int(x[4]))),
+    )
+
     day = au.Day(
         2015,
         6,
@@ -87,14 +77,8 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_MULTI_LINE_STR,
-        test_input=[
-            [
-                "turn on 0,0 through 999,999",
-                "toggle 0,0 through 999,0",
-                "turn off 499,499 through 500,500",
-            ]
-        ],
+        input=command_parser,
+        test_input=command_parser,
     )
 
     day.run_all(run_tests=True)

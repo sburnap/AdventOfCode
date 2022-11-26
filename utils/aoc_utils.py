@@ -22,16 +22,20 @@ class Parser:
 
 
 class RegexParser(Parser):
-    def __init__(self, regexes: list[str]):
+    def __init__(self, regexes: list[str], form=None):
         self.regexes = [re.compile(regex) for regex in regexes]
+        self.form = form if form else self._form
 
     def parse(self, line) -> any:
 
         for regex in self.regexes:
             if m := regex.match(line):
-                return m.groups()
+                return self.form(m.groups())
 
         raise Exception(f"Could not parse {line}")
+
+    def _form(self, results: tuple) -> any:
+        return results
 
 
 class Day:
@@ -97,19 +101,19 @@ class Day:
                     )
                 )
                 elapsed = datetime.datetime.now() - start
-                print(f"({elapsed}) Answer is {answer}")
+                print(f"({elapsed}) Test is {answer}")
 
             case self.InType.INPUT_ONE_LINE_STR:
                 start = datetime.datetime.now()
                 answer = fn(self.one_line_input(filename="test_input.txt"))
                 elapsed = datetime.datetime.now() - start
-                print(f"({elapsed}) Answer is {answer}")
+                print(f"({elapsed}) Test is {answer}")
 
             case self.InType.INPUT_MULTI_LINE_STR:
                 start = datetime.datetime.now()
                 answer = fn(self.multi_line_input(filename="test_input.txt"))
                 elapsed = datetime.datetime.now() - start
-                print(f"({elapsed}) Answer is {answer}")
+                print(f"({elapsed}) Test is {answer}")
 
     def run_it(self, fn, name: str) -> None:
         match self.input:
