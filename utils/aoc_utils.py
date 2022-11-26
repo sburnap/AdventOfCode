@@ -1,9 +1,17 @@
-from typing import Any, Callable
+from typing import Any, Callable, Union
 import pathlib
 import datetime
 from enum import Enum
 
-AocFunction = Callable[[str], int]
+TestFunction = Union[
+    Callable[[list[str]], int],
+    Callable[[str], int],
+    Callable[[list[str]], str],
+    Callable[[str], str],
+]
+
+
+AnswerFunction = Union[Callable[[list[str]], int], Callable[[str], int]]
 
 
 class Day:
@@ -13,10 +21,10 @@ class Day:
         self,
         year: int,
         day: int,
-        test_one: AocFunction,
-        test_two: AocFunction,
-        part_one: AocFunction,
-        part_two: AocFunction,
+        test_one: TestFunction,
+        test_two: TestFunction,
+        part_one: AnswerFunction,
+        part_two: AnswerFunction,
         test_input: Any,
         input=InType.INPUT_ONE_LINE_STR,
     ):

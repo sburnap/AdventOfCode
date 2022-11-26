@@ -1,6 +1,8 @@
-import aoc_utils as au
 import re
 from dataclasses import dataclass
+from typing import Callable, Optional, Generator, Any
+
+import aoc_utils as au
 
 
 @dataclass
@@ -11,17 +13,22 @@ class Rect:
     y2: int
 
 
-def parse_input(input: str):
+def parse_input(input: str) -> Optional[tuple[str, Rect]]:
 
     in_line_re = re.compile(r"(.*) (\d*),(\d*) through (\d*),(\d*)")
-    m = in_line_re.match(input)
+    if m := in_line_re.match(input):
 
-    rc = (
-        m.group(1),
-        Rect(int(m.group(2)), int(m.group(3)), int(m.group(4)), int(m.group(5))),
-    )
+        rc = (
+            str(m.group(1)),
+            Rect(int(m.group(2)), int(m.group(3)), int(m.group(4)), int(m.group(5))),
+        )
 
-    return rc
+        return rc
+
+    return None
+
+
+PerformFunc = Callable[[list[list[int]], int, int, str], None]
 
 
 def perform_part_one(lights: list[list[int]], x: int, y: int, instruction: str) -> None:
@@ -34,10 +41,10 @@ def perform_part_one(lights: list[list[int]], x: int, y: int, instruction: str) 
             lights[x][y] = 1 if lights[x][y] == 0 else 0
 
 
-def brute(commands: list[tuple[str, Rect]], fn):
+def brute(commands: list[Optional[tuple[str, Rect]]], fn):
     lights = [[0] * 1000 for _ in range(1000)]
 
-    for command in commands:
+    for command in filter(None, commands):
         for x in range(command[1].x1, command[1].x2 + 1):
             for y in range(command[1].y1, command[1].y2 + 1):
                 fn(lights, x, y, command[0])
@@ -45,7 +52,7 @@ def brute(commands: list[tuple[str, Rect]], fn):
     return sum([sum([light for light in line]) for line in lights])
 
 
-def test_one(test_input: str) -> int:
+def test_one(test_input: list[str]) -> int:
     return brute([parse_input(command) for command in test_input], perform_part_one)
 
 
@@ -64,7 +71,7 @@ def perform_part_two(lights: list[list[int]], x: int, y: int, instruction: str) 
             lights[x][y] += 2
 
 
-def test_two(test_input: str) -> int:
+def test_two(test_input: list[str]) -> int:
     return brute([parse_input(command) for command in test_input], perform_part_two)
 
 

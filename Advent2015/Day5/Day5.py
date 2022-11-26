@@ -17,7 +17,7 @@ def is_nice(input: str) -> int:
     return False
 
 
-def test_one(test_input: str) -> int:
+def test_one(test_input: str) -> str:
     return "Nice!" if is_nice(test_input) else "Naughty!"
 
 
@@ -40,7 +40,7 @@ def is_nice2(input: str) -> int:
     return False
 
 
-def test_two(test_input: str) -> int:
+def test_two(test_input: str) -> str:
     return "Nice!" if is_nice2(test_input) else "Naughty!"
 
 
