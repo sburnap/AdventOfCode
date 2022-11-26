@@ -77,43 +77,44 @@ class Day:
 
     def test_it(self, fn) -> None:
 
-        match self.test_input:
+        if fn:
+            match self.test_input:
 
-            case [*input] | str(input):
-                if type(input) == str:
-                    input = [input]
-                for line in input:
+                case [*input] | str(input):
+                    if type(input) == str:
+                        input = [input]
+                    for line in input:
+                        start = datetime.datetime.now()
+                        answer = fn(line)
+                        elapsed = datetime.datetime.now() - start
+                        print(
+                            f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {line} ]"[
+                                :100
+                            ]
+                        )
+                    print()
+
+                case Parser():
                     start = datetime.datetime.now()
-                    answer = fn(line)
+                    answer = fn(
+                        self.multi_line_input(
+                            filename="test_input.txt", parser=self.test_input
+                        )
+                    )
                     elapsed = datetime.datetime.now() - start
-                    print(
-                        f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {line} ]"[
-                            :100
-                        ]
-                    )
-                print()
+                    print(f"({elapsed}) Test is {answer}")
 
-            case Parser():
-                start = datetime.datetime.now()
-                answer = fn(
-                    self.multi_line_input(
-                        filename="test_input.txt", parser=self.test_input
-                    )
-                )
-                elapsed = datetime.datetime.now() - start
-                print(f"({elapsed}) Test is {answer}")
+                case self.InType.INPUT_ONE_LINE_STR:
+                    start = datetime.datetime.now()
+                    answer = fn(self.one_line_input(filename="test_input.txt"))
+                    elapsed = datetime.datetime.now() - start
+                    print(f"({elapsed}) Test is {answer}")
 
-            case self.InType.INPUT_ONE_LINE_STR:
-                start = datetime.datetime.now()
-                answer = fn(self.one_line_input(filename="test_input.txt"))
-                elapsed = datetime.datetime.now() - start
-                print(f"({elapsed}) Test is {answer}")
-
-            case self.InType.INPUT_MULTI_LINE_STR:
-                start = datetime.datetime.now()
-                answer = fn(self.multi_line_input(filename="test_input.txt"))
-                elapsed = datetime.datetime.now() - start
-                print(f"({elapsed}) Test is {answer}")
+                case self.InType.INPUT_MULTI_LINE_STR:
+                    start = datetime.datetime.now()
+                    answer = fn(self.multi_line_input(filename="test_input.txt"))
+                    elapsed = datetime.datetime.now() - start
+                    print(f"({elapsed}) Test is {answer}")
 
     def run_it(self, fn, name: str) -> None:
         match self.input:
