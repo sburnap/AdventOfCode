@@ -6,12 +6,8 @@ def get_distances(input: str) -> dict:
     distances = {}
 
     for source, destination, distance in input:
-        if source not in distances:
-            distances[source] = {}
-        distances[source][destination] = distance
-        if destination not in distances:
-            distances[destination] = {}
-        distances[destination][source] = distance
+        distances.setdefault(source, {})[destination] = distance
+        distances.setdefault(destination, {})[source] = distance
 
     return distances
 
@@ -33,6 +29,7 @@ def test_one(input: str) -> int:
     return find_min_route(get_distances(input))
 
 
+# expected 251
 def part_one(input: list[str]) -> int:
     return find_min_route(get_distances(input))
 
@@ -41,13 +38,14 @@ def test_two(input: str) -> int:
     return find_max_route(get_distances(input))
 
 
+# expected 898
 def part_two(input: list[str]) -> int:
     return find_max_route(get_distances(input))
 
 
 if __name__ == "__main__":
     distance_parser = au.RegexParser(
-        ["(.*) to (.*) = (.*)"], lambda x: (x[0], x[1], int(x[2]))
+        [("(.*) to (.*) = (.*)", lambda x: (x[0], x[1], int(x[2])))]
     )
     day = au.Day(
         2015,

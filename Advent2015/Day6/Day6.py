@@ -66,8 +66,12 @@ def part_two(input: list[str]) -> int:
 
 if __name__ == "__main__":
     command_parser = au.RegexParser(
-        ["(.*) (\d*),(\d*) through (\d*),(\d*)"],
-        lambda x: (str(x[0]), Rect(int(x[1]), int(x[2]), int(x[3]), int(x[4]))),
+        [
+            (
+                "(.*) (\d*),(\d*) through (\d*),(\d*)",
+                lambda x: (str(x[0]), Rect(int(x[1]), int(x[2]), int(x[3]), int(x[4]))),
+            )
+        ],
     )
 
     day = au.Day(

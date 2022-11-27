@@ -1,4 +1,4 @@
-from typing import Any, Callable, Union
+from typing import Any, Callable, Union, Optional
 import pathlib
 import datetime
 import re
@@ -13,33 +13,44 @@ TestFunction = Union[
 
 
 AnswerFunction = Union[Callable[[list[str]], int], Callable[[str], int]]
+FormFunction = Callable[[list[str]], Any]
 
 
 class Parser:
-    def parse(self, line) -> any:
+    def parse(self, line) -> Any:
 
         return line
 
 
+class IntParser:
+    def parse(self, line) -> Any:
+
+        return int(line)
+
+
 class RegexParser(Parser):
-    def __init__(self, regexes: list[str], form=None):
-        self.regexes = [re.compile(regex) for regex in regexes]
-        self.form = form if form else self._form
+    def __init__(self, regexes: list[str, Optional[FormFunction]]):
+        self.regexes = [(re.compile(regex[0]), regex[1]) for regex in regexes]
 
-    def parse(self, line) -> any:
+    def parse(self, line) -> Any:
 
-        for regex in self.regexes:
+        for regex, form in self.regexes:
             if m := regex.match(line):
-                return self.form(m.groups())
+                if form:
+                    return form(m.groups())
+                else:
+                    return m.groups()
 
         raise Exception(f"Could not parse {line}")
 
-    def _form(self, results: tuple) -> any:
+    def _form(self, results: tuple) -> Any:
         return results
 
 
 class Day:
-    InType = Enum("InType", ["INPUT_ONE_LINE_STR", "INPUT_MULTI_LINE_STR"])
+    InType = Enum(
+        "InType", ["INPUT_ONE_LINE_STR", "INPUT_MULTI_LINE_STR", "INPUT_MULTI_LINE_INT"]
+    )
 
     def __init__(
         self,
@@ -77,10 +88,12 @@ class Day:
 
     def test_it(self, fn) -> None:
 
+        input: list | str
         if fn:
             match self.test_input:
 
-                case [*input] | str(input):
+                # See https://github.com/python/mypy/issues/13950
+                case [*input] | str(input):  # type: ignore[misc]
                     if type(input) == str:
                         input = [input]
                     for line in input:
@@ -116,6 +129,16 @@ class Day:
                     elapsed = datetime.datetime.now() - start
                     print(f"({elapsed}) Test is {answer}")
 
+                case self.InType.INPUT_MULTI_LINE_INT:
+                    start = datetime.datetime.now()
+                    answer = fn(
+                        self.multi_line_input(
+                            parser=IntParser(), filename="test_input.txt"
+                        )
+                    )
+                    elapsed = datetime.datetime.now() - start
+                    print(f"({elapsed}) Test is {answer}")
+
     def run_it(self, fn, name: str) -> None:
         match self.input:
             case self.InType.INPUT_ONE_LINE_STR:
@@ -126,6 +149,13 @@ class Day:
             case self.InType.INPUT_MULTI_LINE_STR:
                 start = datetime.datetime.now()
                 answer = fn(self.multi_line_input())
+                elapsed = datetime.datetime.now() - start
+
+            case self.InType.INPUT_MULTI_LINE_INT:
+                start = datetime.datetime.now()
+                answer = fn(
+                    self.multi_line_input(parser=IntParser(), filename="input.txt")
+                )
                 elapsed = datetime.datetime.now() - start
 
             case Parser():

@@ -16,7 +16,7 @@ def calculate_floor(input: str) -> tuple[int, Optional[int]]:
                 floor -= 1
             case _:
                 raise Exception(
-                    f"Bad charact '{ch}' found in position {step} for input {input[:10]}"
+                    f"Bad character '{ch}' found in position {step} for input {input[:10]}"
                 )
         if floor < 0 and basement == None:
             basement = step + 1

@@ -22,6 +22,12 @@ class Command:
             self.operand2 = operand2
         self.target = target
 
+    def __repr__(self):
+        if self.operand2:
+            return f"{self.name} {self.operand1}, {self.operand2} -> {self.target}"
+        else:
+            return f"{self.name} {self.operand1} -> {self.target}"
+
 
 class Machine:
     def __init__(self, command_list: list[Command]):
@@ -31,15 +37,16 @@ class Machine:
     def evaluate(self, wire: str) -> int:
         command: Command = self.machine[wire]
 
-        if type(command.operand1) == int:
-            op1 = command.operand1
-        elif command.operand1:
-            op1 = self.evaluate(command.operand1)
-
-        if type(command.operand2) == int:
-            op2 = command.operand2
-        elif command.operand2:
-            op2 = self.evaluate(command.operand2)
+        op1 = (
+            command.operand1
+            if type(command.operand1) == int
+            else self.evaluate(command.operand1)
+        )
+        op2 = (
+            command.operand2
+            if type(command.operand2) == int or command.operand2 == None
+            else self.evaluate(command.operand2)
+        )
 
         match command.name:
             case "ASSIGN":
@@ -58,49 +65,41 @@ class Machine:
                 raise Exception(f"Bad command {command.name}")
 
 
-def parse_command(command: str) -> Command:
-    assign_re = re.compile("([^\s]*) -> ([^\s]*)")
-    not_re = re.compile("NOT ([^\s]*) -> ([^\s]*)")
-    other_re = re.compile("([^\s]*) (AND|OR|LSHIFT|RSHIFT) ([^\s]*) -> ([^\s]*)")
-
-    if m := assign_re.match(command):
-        return Command("ASSIGN", m.group(1), None, m.group(2))
-    elif m := not_re.match(command):
-        return Command("NOT", m.group(1), None, m.group(2))
-    elif m := other_re.match(command):
-        return Command(m.group(2), m.group(1), m.group(3), m.group(4))
-
-    raise Exception(f"Unparseable command {command}")
-
-
-def parse_commands(commands: list[str]) -> list[Command]:
-
-    return [parse_command(command) for command in commands]
-
-
 def test_one(input: list[str]) -> int:
-    return Machine(parse_commands(input)).evaluate("i")
+    return Machine(input).evaluate("i")
 
 
+# expected 16076
 def part_one(input: list[str]) -> int:
-    return Machine(parse_commands(input)).evaluate("a")
+    return Machine(input).evaluate("a")
 
 
 def test_two(input: list[str]) -> int:
-    machine = Machine(parse_commands(input))
+    machine = Machine(input)
     machine.machine["y"] = Command("ASSIGN", 42, None, "y")
 
     return machine.evaluate("i")
 
 
+# expected 2797
 def part_two(input: list[str]) -> int:
-    machine = Machine(parse_commands(input))
+    machine = Machine(input)
     machine.machine["b"] = Command("ASSIGN", 16076, None, "b")
 
     return machine.evaluate("a")
 
 
 if __name__ == "__main__":
+    wire_parser = au.RegexParser(
+        [
+            ("([^\s]*) -> ([^\s]*)", lambda m: Command("ASSIGN", m[0], None, m[1])),
+            ("NOT ([^\s]*) -> ([^\s]*)", lambda m: Command("NOT", m[0], None, m[1])),
+            (
+                "([^\s]*) (AND|OR|LSHIFT|RSHIFT) ([^\s]*) -> ([^\s]*)",
+                lambda m: Command(m[1], m[0], m[2], m[3]),
+            ),
+        ]
+    )
     day = au.Day(
         2015,
         7,
@@ -108,19 +107,8 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_MULTI_LINE_STR,
-        test_input=[
-            [
-                "123 -> x",
-                "456 -> y",
-                "x AND y -> d",
-                "x OR y -> e",
-                "x LSHIFT 2 -> f",
-                "y RSHIFT 2 -> g",
-                "NOT x -> h",
-                "NOT y -> i",
-            ]
-        ],
+        input=wire_parser,
+        test_input=wire_parser,
     )
 
     day.run_all(run_tests=True)
