@@ -1,18 +1,18 @@
-from typing import Any, Callable, Union, Optional
+from typing import Any, Callable, Union, Optional, Tuple
 import pathlib
 import datetime
 import re
 from enum import Enum
 
 TestFunction = Union[
-    Callable[[list[str]], int],
+    Callable[[list[Any]], int],
     Callable[[str], int],
-    Callable[[list[str]], str],
+    Callable[[list[Any]], str],
     Callable[[str], str],
 ]
 
 
-AnswerFunction = Union[Callable[[list[str]], int], Callable[[str], int]]
+AnswerFunction = Union[Callable[[list[Any]], int], Callable[[str], int]]
 FormFunction = Callable[[list[str]], Any]
 
 
@@ -22,14 +22,14 @@ class Parser:
         return line
 
 
-class IntParser:
+class IntParser(Parser):
     def parse(self, line) -> Any:
 
         return int(line)
 
 
 class RegexParser(Parser):
-    def __init__(self, regexes: list[str, Optional[FormFunction]]):
+    def __init__(self, regexes: list[tuple[str, Optional[FormFunction]]]):
         self.regexes = [(re.compile(regex[0]), regex[1]) for regex in regexes]
 
     def parse(self, line) -> Any:
@@ -37,7 +37,7 @@ class RegexParser(Parser):
         for regex, form in self.regexes:
             if m := regex.match(line):
                 if form:
-                    return form(m.groups())
+                    return form(list(m.groups()))
                 else:
                     return m.groups()
 
