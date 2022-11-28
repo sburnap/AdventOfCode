@@ -67,7 +67,7 @@ if __name__ == "__main__":
     deer_parser = au.RegexParser(
         [
             (
-                "(.*) can fly (\d*) km/s for (\d*) seconds, but then must rest for (\d*) seconds.",
+                r"(.*) can fly (\d*) km/s for (\d*) seconds, but then must rest for (\d*) seconds.",
                 lambda m: Deer(m[0], int(m[1]), int(m[2]), int(m[3])),
             )
         ]

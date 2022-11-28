@@ -3,6 +3,7 @@ import pathlib
 import datetime
 import re
 from enum import Enum
+from datetime import timedelta
 
 TestFunction = Union[
     Callable[[list[Any]], int],
@@ -14,6 +15,7 @@ TestFunction = Union[
 
 AnswerFunction = Union[Callable[[list[Any]], int], Callable[[str], int]]
 FormFunction = Callable[[list[str]], Any]
+Map = list[list[str]]
 
 
 class Parser:
@@ -26,6 +28,12 @@ class IntParser(Parser):
     def parse(self, line) -> Any:
 
         return int(line)
+
+
+class MapParser(Parser):
+    def parse(self, line) -> Any:
+
+        return [ch for ch in line]
 
 
 class RegexParser(Parser):
@@ -49,15 +57,21 @@ class RegexParser(Parser):
 
 class Day:
     InType = Enum(
-        "InType", ["INPUT_ONE_LINE_STR", "INPUT_MULTI_LINE_STR", "INPUT_MULTI_LINE_INT"]
+        "InType",
+        [
+            "INPUT_ONE_LINE_STR",
+            "INPUT_MULTI_LINE_STR",
+            "INPUT_MULTI_LINE_INT",
+            "INPUT_MAP",
+        ],
     )
 
     def __init__(
         self,
         year: int,
         day: int,
-        test_one: TestFunction,
-        test_two: TestFunction,
+        test_one: Optional[TestFunction],
+        test_two: Optional[TestFunction],
         part_one: AnswerFunction,
         part_two: TestFunction,
         test_input: Any,
@@ -86,88 +100,66 @@ class Day:
         print(f"Advent of code for Year {self.year} Day {self.day}:")
         print()
 
-    def test_it(self, fn) -> None:
+    def runner(self, fn, infile: str) -> tuple[Any, timedelta]:
 
-        input: list | str
-        if fn:
-            match self.test_input:
-
-                # See https://github.com/python/mypy/issues/13950
-                case [*input] | str(input):  # type: ignore[misc]
-                    if type(input) == str:
-                        input = [input]
-                    for line in input:
-                        start = datetime.datetime.now()
-                        answer = fn(line)
-                        elapsed = datetime.datetime.now() - start
-                        print(
-                            f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {line} ]"[
-                                :100
-                            ]
-                        )
-                    print()
-
-                case Parser():
+        input: str | list[str]
+        match self.test_input:
+            # See https://github.com/python/mypy/issues/13950
+            case [*input] | str(input):  # type: ignore[misc]
+                if type(input) == str:
+                    input = [input]
+                for line in input:
                     start = datetime.datetime.now()
-                    answer = fn(
-                        self.multi_line_input(
-                            filename="test_input.txt", parser=self.test_input
-                        )
+                    answer = fn(line)
+                    elapsed = datetime.datetime.now() - start
+                    print(
+                        f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {line} ]"[
+                            :100
+                        ]
                     )
-                    elapsed = datetime.datetime.now() - start
-                    print(f"({elapsed}) Test is {answer}")
+                answer = None
 
-                case self.InType.INPUT_ONE_LINE_STR:
-                    start = datetime.datetime.now()
-                    answer = fn(self.one_line_input(filename="test_input.txt"))
-                    elapsed = datetime.datetime.now() - start
-                    print(f"({elapsed}) Test is {answer}")
+            case Parser():
+                start = datetime.datetime.now()
+                answer = fn(
+                    self.multi_line_input(filename=infile, parser=self.test_input)
+                )
+                elapsed = datetime.datetime.now() - start
 
-                case self.InType.INPUT_MULTI_LINE_STR:
-                    start = datetime.datetime.now()
-                    answer = fn(self.multi_line_input(filename="test_input.txt"))
-                    elapsed = datetime.datetime.now() - start
-                    print(f"({elapsed}) Test is {answer}")
-
-                case self.InType.INPUT_MULTI_LINE_INT:
-                    start = datetime.datetime.now()
-                    answer = fn(
-                        self.multi_line_input(
-                            parser=IntParser(), filename="test_input.txt"
-                        )
-                    )
-                    elapsed = datetime.datetime.now() - start
-                    print(f"({elapsed}) Test is {answer}")
-
-    def run_it(self, fn, name: str) -> None:
-        match self.input:
             case self.InType.INPUT_ONE_LINE_STR:
                 start = datetime.datetime.now()
-                answer = fn(self.one_line_input())
+                answer = fn(self.one_line_input(filename=infile))
                 elapsed = datetime.datetime.now() - start
 
             case self.InType.INPUT_MULTI_LINE_STR:
                 start = datetime.datetime.now()
-                answer = fn(self.multi_line_input())
+                answer = fn(self.multi_line_input(filename=infile))
                 elapsed = datetime.datetime.now() - start
 
             case self.InType.INPUT_MULTI_LINE_INT:
                 start = datetime.datetime.now()
-                answer = fn(
-                    self.multi_line_input(parser=IntParser(), filename="input.txt")
-                )
+                answer = fn(self.multi_line_input(parser=IntParser(), filename=infile))
                 elapsed = datetime.datetime.now() - start
 
-            case Parser():
+            case self.InType.INPUT_MAP:
                 start = datetime.datetime.now()
-                answer = fn(self.multi_line_input(parser=self.test_input))
+                answer = fn(self.multi_line_input(parser=MapParser(), filename=infile))
                 elapsed = datetime.datetime.now() - start
+
+            case None:
+                answer = fn(None)
 
             case _:
-                start = datetime.datetime.now()
-                answer = fn(self.input)
-                elapsed = datetime.datetime.now() - start
+                raise Exception("Unknown data input type")
+        return answer, elapsed
 
+    def test_it(self, fn) -> None:
+        if fn:
+            answer, elapsed = self.runner(fn, "test_input.txt")
+            print(f"({elapsed}) Test is {answer}")
+
+    def run_it(self, fn, name: str) -> None:
+        answer, elapsed = self.runner(fn, "input.txt")
         print(f"({elapsed}) Answer for {name} is {answer}")
 
     def run_all(self, run_tests=False):
