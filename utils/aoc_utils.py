@@ -100,10 +100,12 @@ class Day:
         print(f"Advent of code for Year {self.year} Day {self.day}:")
         print()
 
-    def runner(self, fn, infile: str) -> tuple[Any, timedelta]:
+    def runner(
+        self, fn, infile: str, input_method: Optional[TestFunction]
+    ) -> tuple[Any, timedelta]:
 
         input: str | list[str]
-        match self.test_input:
+        match input_method:
             # See https://github.com/python/mypy/issues/13950
             case [*input] | str(input):  # type: ignore[misc]
                 if type(input) == str:
@@ -121,9 +123,7 @@ class Day:
 
             case Parser():
                 start = datetime.datetime.now()
-                answer = fn(
-                    self.multi_line_input(filename=infile, parser=self.test_input)
-                )
+                answer = fn(self.multi_line_input(filename=infile, parser=input_method))
                 elapsed = datetime.datetime.now() - start
 
             case self.InType.INPUT_ONE_LINE_STR:
@@ -147,7 +147,9 @@ class Day:
                 elapsed = datetime.datetime.now() - start
 
             case None:
+                start = datetime.datetime.now()
                 answer = fn(None)
+                elapsed = datetime.datetime.now() - start
 
             case _:
                 raise Exception("Unknown data input type")
@@ -155,11 +157,12 @@ class Day:
 
     def test_it(self, fn) -> None:
         if fn:
-            answer, elapsed = self.runner(fn, "test_input.txt")
-            print(f"({elapsed}) Test is {answer}")
+            answer, elapsed = self.runner(fn, "test_input.txt", self.test_input)
+            if answer:
+                print(f"({elapsed}) Test is {answer}")
 
     def run_it(self, fn, name: str) -> None:
-        answer, elapsed = self.runner(fn, "input.txt")
+        answer, elapsed = self.runner(fn, "input.txt", self.input)
         print(f"({elapsed}) Answer for {name} is {answer}")
 
     def run_all(self, run_tests=False):
