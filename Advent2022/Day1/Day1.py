@@ -3,7 +3,7 @@ from typing import Generator
 import aoc_utils as au
 
 
-def read_elves(foods: list[str]) -> Generator[list[int], None, None]:
+def read_elves(foods: list[str]) -> Generator[int, None, None]:
 
     calories = 0
     for food in foods:
