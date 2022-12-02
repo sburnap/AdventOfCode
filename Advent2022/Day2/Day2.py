@@ -2,45 +2,34 @@ import aoc_utils as au
 
 
 def score(them: str, me: str):
-
-    return (
-        "?XYZ".index(me)
-        + {"A": [3, 6, 0], "B": [0, 3, 6], "C": [6, 0, 3]}[them][ord(me) - ord("X")]
-    )
+    return [[4, 8, 3], [1, 5, 9], [7, 2, 6]][ord(them) - ord("A")][ord(me) - ord("X")]
 
 
 # expected 15
-def test_one(input: list[tuple[str, str]]) -> int:
-    return sum([score(*game) for game in input])
+def test_one(input: list[str]) -> int:
+    return sum([score(*game.split()) for game in input])
 
 
 # expected 10404
-def part_one(input: list[tuple[str, str]]) -> int:
-    return sum([score(*game) for game in input])
+def part_one(input: list[str]) -> int:
+    return sum([score(*game.split()) for game in input])
 
 
-def move(them: str, me: str):
-
-    return {
-        "A": {"X": "Z", "Y": "X", "Z": "Y"},
-        "B": {"X": "X", "Y": "Y", "Z": "Z"},
-        "C": {"X": "Y", "Y": "Z", "Z": "X"},
-    }[them][me]
+def score2(them: str, me: str):
+    return [[3, 4, 8], [1, 5, 9], [2, 6, 7]][ord(them) - ord("A")][ord(me) - ord("X")]
 
 
 # expected 12
 def test_two(input: list[tuple[str, str]]) -> int:
-    return sum([score(game[0], move(*game)) for game in input])
+    return sum([score2(*game.split()) for game in input])
 
 
 # expected 10334
 def part_two(input: list[tuple[str, str]]) -> int:
-    return sum([score(game[0], move(*game)) for game in input])
+    return sum([score2(*game.split()) for game in input])
 
 
 if __name__ == "__main__":
-    game_parser = au.RegexParser([(r"(.) (.)", lambda m: (m[0], m[1]))])
-
     day = au.Day(
         2022,
         2,
@@ -48,8 +37,8 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=game_parser,
-        test_input=game_parser,
+        input=au.Day.InType.INPUT_MULTI_LINE_STR,
+        test_input=au.Day.InType.INPUT_MULTI_LINE_STR,
     )
 
     day.run_all(run_tests=True)
