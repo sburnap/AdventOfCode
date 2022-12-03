@@ -20,12 +20,12 @@ def score2(them: str, me: str):
 
 
 # expected 12
-def test_two(input: list[tuple[str, str]]) -> int:
+def test_two(input: list[str]) -> int:
     return sum([score2(*game.split()) for game in input])
 
 
 # expected 10334
-def part_two(input: list[tuple[str, str]]) -> int:
+def part_two(input: list[str]) -> int:
     return sum([score2(*game.split()) for game in input])
 
 
