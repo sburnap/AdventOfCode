@@ -1,5 +1,4 @@
-from typing import Generator
-
+import string
 import aoc_utils as au
 
 
@@ -10,7 +9,7 @@ def inboth(rucksack: str) -> str:
 
 
 def score(char: str) -> int:
-    return 1 + (ord(char) - ord("a") if char.islower() else 26 + ord(char) - ord("A"))
+    return 1 + string.ascii_letters.index(char)
 
 
 # expected 157
