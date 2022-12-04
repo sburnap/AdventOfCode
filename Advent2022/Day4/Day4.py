@@ -1,11 +1,16 @@
 import aoc_utils as au
+from dataclasses import dataclass
 
-Area = tuple[int, int]
+
+@dataclass
+class Area:
+    start: int
+    end: int
 
 
 def contains(first: Area, second: Area) -> bool:
-    return (first[0] <= second[0] and first[-1] >= second[-1]) or (
-        second[0] <= first[0] and second[-1] >= first[-1]
+    return (first.start <= second.start and first.end >= second.end) or (
+        second.start <= first.start and second.end >= first.end
     )
 
 
@@ -18,7 +23,9 @@ def part_one(input: list[tuple[Area, Area]]) -> int:
 
 
 def overlap(first: Area, second: Area) -> bool:
-    return (second[0] <= first[0] <= second[-1]) or (first[0] <= second[0] <= first[-1])
+    return (second.start <= first.start <= second.end) or (
+        first.start <= second.start <= first.end
+    )
 
 
 def test_two(input: list[tuple[Area, Area]]) -> int:
@@ -34,7 +41,7 @@ if __name__ == "__main__":
         [
             (
                 "(\d*)-(\d*),(\d*)-(\d*)",
-                lambda m: ((int(m[0]), int(m[1])), (int(m[2]), int(m[3]))),
+                lambda m: (Area(int(m[0]), int(m[1])), Area(int(m[2]), int(m[3]))),
             )
         ]
     )
