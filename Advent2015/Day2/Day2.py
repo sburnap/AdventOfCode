@@ -44,7 +44,6 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_MULTI_LINE_STR,
         test_input=["2x3x4", "1x1x10"],
     )
 

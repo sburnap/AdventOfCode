@@ -29,6 +29,11 @@ def make_day(
         else:
             shutil.copy(input_data, target)
 
+        if not force and os.path.isfile(target / "test_input.txt"):
+            print(f"Test data already exists in {target}, ignoring (-f to force)")
+        else:
+            open(target / "test_input.txt", "wt")
+
     targetfile = target / f"Day{day}.py"
     if not os.path.isfile(targetfile):
         contents = open("utils/template_day.py.txt", "rt").read()

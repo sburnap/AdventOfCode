@@ -57,7 +57,6 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_MULTI_LINE_STR,
         test_input=[
             "[1,2,3]",
             '{"a":2,"b":4}',

@@ -21,11 +21,11 @@ def expand(input: str) -> str:
     return rc
 
 
-def test_one(input: str) -> int:
+def test_one(input: str) -> str:
     return expand(input)
 
 
-def part_one(input: list[str]) -> int:
+def part_one(input: str) -> int:
     current = input
     for i in range(40):
         current = expand(current)
@@ -33,11 +33,11 @@ def part_one(input: list[str]) -> int:
     return len(current)
 
 
-def test_two(input: str) -> int:
+def test_two(input: str) -> str:
     return expand(input)
 
 
-def part_two(input: list[str]) -> int:
+def part_two(input: str) -> int:
     current = input
     for i in range(50):
         current = expand(current)

@@ -141,8 +141,8 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_MAP,
-        test_input=au.Day.InType.INPUT_MAP,
+        input=au.MapParser(),
+        test_input=au.MapParser(),
     )
 
     day.run_all(run_tests=True)

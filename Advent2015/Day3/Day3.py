@@ -64,7 +64,7 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_ONE_LINE_STR,
+        input=au.Parser(),
         test_input=[">", "^>v<", "^v^v^v^v^v", "^v"],
     ).run_all(run_tests=True)
 

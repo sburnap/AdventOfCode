@@ -49,8 +49,8 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_MULTI_LINE_INT,
-        test_input=au.Day.InType.INPUT_MULTI_LINE_INT,
+        input=au.IntParser(),
+        test_input=au.IntParser(),
     )
 
     day.run_all(run_tests=True)

@@ -5,7 +5,7 @@ from itertools import permutations
 import aoc_utils as au
 
 
-def score(table: list[str], rules):
+def score(table: tuple[str, ...], rules):
     sm = 0
     for i, person in enumerate(table):
         left = i - 1 if i > 0 else len(table) - 1
@@ -15,8 +15,8 @@ def score(table: list[str], rules):
     return sm
 
 
-def build_scores(input: list[tuple[Any]]) -> dict[str, dict[str, int]]:
-    scores = {}
+def build_scores(input: list[tuple[str, str, int]]) -> dict[str, dict[str, int]]:
+    scores: dict[str, dict[str, int]] = {}
 
     for person, next_to, gain in input:
         scores.setdefault(person, {})[next_to] = gain
@@ -24,7 +24,7 @@ def build_scores(input: list[tuple[Any]]) -> dict[str, dict[str, int]]:
     return scores
 
 
-def test_one(input: list[tuple[Any]]) -> int:
+def test_one(input: list[tuple[str, str, int]]) -> int:
 
     scores = build_scores(input)
 
@@ -32,7 +32,7 @@ def test_one(input: list[tuple[Any]]) -> int:
     return max([score(possible, scores) for possible in possibles])
 
 
-def part_one(input: list[str]) -> int:
+def part_one(input: list[tuple[str, str, int]]) -> int:
     scores = build_scores(input)
 
     possibles = list(permutations(scores.keys()))
@@ -47,7 +47,7 @@ def add_santa(scores: dict[str, dict[str, int]]) -> dict[str, dict[str, int]]:
     return scores
 
 
-def part_two(input: list[str]) -> int:
+def part_two(input: list[tuple[str, str, int]]) -> int:
     scores = add_santa(build_scores(input))
 
     possibles = list(permutations(scores.keys()))

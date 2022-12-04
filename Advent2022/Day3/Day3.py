@@ -43,15 +43,6 @@ def part_two(input: list[str]) -> int:
 
 
 if __name__ == "__main__":
-    day = au.Day(
-        2022,
-        3,
-        test_one,
-        test_two,
-        part_one,
-        part_two,
-        input=au.Day.InType.INPUT_MULTI_LINE_STR,
-        test_input=au.Day.InType.INPUT_MULTI_LINE_STR,
-    )
+    day = au.Day(2022, 3, test_one, test_two, part_one, part_two)
 
     day.run_all(run_tests=True)

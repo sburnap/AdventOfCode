@@ -29,7 +29,7 @@ def test_one(test_input):
 
 
 def part_one(input):
-    return calculate_floor(input)[0]
+    return calculate_floor(input[0])[0]
 
 
 def test_two(test_input):
@@ -37,7 +37,7 @@ def test_two(test_input):
 
 
 def part_two(input):
-    return calculate_floor(input)[1]
+    return calculate_floor(input[0])[1]
 
 
 if __name__ == "__main__":
@@ -48,7 +48,6 @@ if __name__ == "__main__":
         test_two,
         part_one,
         part_two,
-        input=au.Day.InType.INPUT_ONE_LINE_STR,
         test_input=["(())", "()()", "(((", "(()(()(", "())", ")())())", ")", "()())"],
     )
 

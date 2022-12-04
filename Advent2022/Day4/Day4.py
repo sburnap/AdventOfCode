@@ -1,3 +1,5 @@
+from typing import Optional
+
 import aoc_utils as au
 from dataclasses import dataclass
 
@@ -14,11 +16,13 @@ def contains(first: Area, second: Area) -> bool:
     )
 
 
-def test_one(input: list[tuple[Area, Area]]) -> int:
+# expected 2
+def test_one(input: list[tuple[Area, Area]]) -> Optional[int]:
     return len([pair for pair in input if contains(*pair)])
 
 
-def part_one(input: list[tuple[Area, Area]]) -> int:
+# expected 562
+def part_one(input: list[tuple[Area, Area]]) -> Optional[int]:
     return len([pair for pair in input if contains(*pair)])
 
 
@@ -28,11 +32,13 @@ def overlap(first: Area, second: Area) -> bool:
     )
 
 
-def test_two(input: list[tuple[Area, Area]]) -> int:
+# expected 4
+def test_two(input: list[tuple[Area, Area]]) -> Optional[int]:
     return len([pair for pair in input if overlap(*pair)])
 
 
-def part_two(input: list[tuple[Area, Area]]) -> int:
+# expected 924
+def part_two(input: list[tuple[Area, Area]]) -> Optional[int]:
     return len([pair for pair in input if overlap(*pair)])
 
 
@@ -45,15 +51,6 @@ if __name__ == "__main__":
             )
         ]
     )
-    day = au.Day(
-        2022,
-        4,
-        test_one,
-        test_two,
-        part_one,
-        part_two,
-        input=pair_parser,
-        test_input=pair_parser,
-    )
+    day = au.Day(2022, 4, test_one, test_two, part_one, part_two, input=pair_parser)
 
     day.run_all(run_tests=True)

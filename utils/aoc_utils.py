@@ -6,16 +6,24 @@ from enum import Enum
 from datetime import timedelta
 
 TestFunction = Union[
-    Callable[[list[Any]], int],
-    Callable[[str], int],
-    Callable[[list[Any]], str],
-    Callable[[str], str],
+    Callable[[list[Any]], Optional[int]],
+    Callable[[str], Optional[int]],
 ]
 
 
-AnswerFunction = Union[Callable[[list[Any]], int], Callable[[str], int]]
+AnswerFunction = Union[
+    Callable[[list[Any]], Optional[int]], Callable[[str], Optional[int]]
+]
 FormFunction = Callable[[list[str]], Any]
 Map = list[list[str]]
+
+
+class RegexException(Exception):
+    pass
+
+
+class ParsingException(Exception):
+    pass
 
 
 class Parser:
@@ -49,23 +57,13 @@ class RegexParser(Parser):
                 else:
                     return m.groups()
 
-        raise Exception(f"Could not parse {line}")
+        raise RegexException(f"Could not parse '{line}'")
 
     def _form(self, results: tuple) -> Any:
         return results
 
 
 class Day:
-    InType = Enum(
-        "InType",
-        [
-            "INPUT_ONE_LINE_STR",
-            "INPUT_MULTI_LINE_STR",
-            "INPUT_MULTI_LINE_INT",
-            "INPUT_MAP",
-        ],
-    )
-
     def __init__(
         self,
         year: int,
@@ -73,27 +71,32 @@ class Day:
         test_one: Optional[TestFunction],
         test_two: Optional[TestFunction],
         part_one: AnswerFunction,
-        part_two: TestFunction,
-        test_input: Any,
-        input=InType.INPUT_ONE_LINE_STR,
+        part_two: AnswerFunction,
+        test_input: Optional[list[str] | str | Parser] = None,
+        input: list[str] | str | Parser = Parser(),
     ):
         self.year = year
         self.day = day
         self.dir = pathlib.Path(f"Advent{self.year}", f"Day{self.day}")
-        self.test_input = test_input
         self.input = input
+        self.test_input = test_input if test_input else self.input
         self.test_one = test_one
         self.test_two = test_two
         self.part_one = part_one
         self.part_two = part_two
 
     def multi_line_input(self, filename="input.txt", parser: Parser = Parser()):
-        return [parser.parse(line.strip()) for line in open(self.dir / filename)]
+        try:
+            rc = []
 
-    def one_line_input(self, filename="input.txt"):
-        input = self.multi_line_input(filename=filename)
-        assert len(input) == 1
-        return input[0]
+            for i, line in enumerate(open(self.dir / filename)):
+                rc.append(parser.parse(line.strip()))
+            return rc
+
+        except RegexException as ex:
+            raise ParsingException(
+                f"Parse filed in {filename} on line {i}: {ex}"
+            ) from ex
 
     def header(self):
         print()
@@ -101,15 +104,11 @@ class Day:
         print()
 
     def runner(
-        self, fn, infile: str, input_method: Optional[TestFunction]
+        self, fn, infile: str, input_method: str | list[str] | Parser
     ) -> tuple[Any, timedelta]:
 
-        input: str | list[str]
         match input_method:
-            # See https://github.com/python/mypy/issues/13950
-            case [*input] | str(input):  # type: ignore[misc]
-                if type(input) == str:
-                    input = [input]
+            case [*input]:
                 for line in input:
                     start = datetime.datetime.now()
                     answer = fn(line)
@@ -121,49 +120,29 @@ class Day:
                     )
                 answer = None
 
+            case str(input):
+                start = datetime.datetime.now()
+                answer = fn(input)
+                elapsed = datetime.datetime.now() - start
+
             case Parser():
                 start = datetime.datetime.now()
                 answer = fn(self.multi_line_input(filename=infile, parser=input_method))
                 elapsed = datetime.datetime.now() - start
 
-            case self.InType.INPUT_ONE_LINE_STR:
-                start = datetime.datetime.now()
-                answer = fn(self.one_line_input(filename=infile))
-                elapsed = datetime.datetime.now() - start
-
-            case self.InType.INPUT_MULTI_LINE_STR:
-                start = datetime.datetime.now()
-                answer = fn(self.multi_line_input(filename=infile))
-                elapsed = datetime.datetime.now() - start
-
-            case self.InType.INPUT_MULTI_LINE_INT:
-                start = datetime.datetime.now()
-                answer = fn(self.multi_line_input(parser=IntParser(), filename=infile))
-                elapsed = datetime.datetime.now() - start
-
-            case self.InType.INPUT_MAP:
-                start = datetime.datetime.now()
-                answer = fn(self.multi_line_input(parser=MapParser(), filename=infile))
-                elapsed = datetime.datetime.now() - start
-
-            case None:
-                start = datetime.datetime.now()
-                answer = fn(None)
-                elapsed = datetime.datetime.now() - start
-
             case _:
-                raise Exception("Unknown data input type")
+                raise ParsingException(f"Unknown data input type {input_method}")
         return answer, elapsed
 
     def test_it(self, fn) -> None:
         if fn:
             answer, elapsed = self.runner(fn, "test_input.txt", self.test_input)
             if answer:
-                print(f"({elapsed}) Test is {answer}")
+                print(f"({elapsed}) Test is {answer if answer else 'I Dunno'}")
 
     def run_it(self, fn, name: str) -> None:
         answer, elapsed = self.runner(fn, "input.txt", self.input)
-        print(f"({elapsed}) Answer for {name} is {answer}")
+        print(f"({elapsed}) Answer for {name} is {answer if answer else 'I Dunno'}")
 
     def run_all(self, run_tests=False):
         self.header()
