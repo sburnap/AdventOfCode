@@ -45,7 +45,7 @@ def test_one(test_input: str) -> int:
 
 
 def part_one(input: str) -> int:
-    return count_houses(input, 1)
+    return count_houses(input[0], 1)
 
 
 def test_two(test_input: str) -> int:
@@ -53,7 +53,7 @@ def test_two(test_input: str) -> int:
 
 
 def part_two(input: str) -> int:
-    return count_houses(input, 2)
+    return count_houses(input[0], 2)
 
 
 if __name__ == "__main__":
@@ -66,6 +66,6 @@ if __name__ == "__main__":
         part_two,
         input=au.Parser(),
         test_input=[">", "^>v<", "^v^v^v^v^v", "^v"],
-    ).run_all(run_tests=True)
+    )
 
     day.run_all(run_tests=True)

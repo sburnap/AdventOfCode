@@ -28,19 +28,22 @@ class ParsingException(Exception):
 
 
 class Parser:
-    def parse(self, line) -> Any:
+    def parse(self, line: str, strip: bool = True) -> Any:
+
+        if strip:
+            return line.strip()
 
         return line
 
 
 class IntParser(Parser):
-    def parse(self, line) -> Any:
+    def parse(self, line: str, strip: bool = True) -> Any:
 
-        return int(line)
+        return int(line.strip())
 
 
 class MapParser(Parser):
-    def parse(self, line) -> Any:
+    def parse(self, line, strip: bool = True) -> Any:
 
         return [ch for ch in line]
 
@@ -49,7 +52,7 @@ class RegexParser(Parser):
     def __init__(self, regexes: list[tuple[str, Optional[FormFunction]]]):
         self.regexes = [(re.compile(regex[0]), regex[1]) for regex in regexes]
 
-    def parse(self, line) -> Any:
+    def parse(self, line, strip: bool = True) -> Any:
 
         for regex, form in self.regexes:
             if m := regex.match(line):
@@ -91,7 +94,7 @@ class Day:
             rc = []
 
             for i, line in enumerate(open(self.dir / filename)):
-                rc.append(parser.parse(line[:-1]))
+                rc.append(parser.parse(line))
             return rc
 
         except RegexException as ex:
