@@ -6,13 +6,14 @@ from enum import Enum
 from datetime import timedelta
 
 TestFunction = Union[
-    Callable[[list[Any]], Optional[int]],
-    Callable[[str], Optional[int]],
+    Callable[[list[Any]], Optional[str | int]],
+    Callable[[str], Optional[str | int]],
 ]
 
 
 AnswerFunction = Union[
-    Callable[[list[Any]], Optional[int]], Callable[[str], Optional[int]]
+    Callable[[list[Any]], Optional[str | int]],
+    Callable[[str], Optional[str | int]],
 ]
 FormFunction = Callable[[list[str]], Any]
 Map = list[list[str]]
@@ -90,7 +91,7 @@ class Day:
             rc = []
 
             for i, line in enumerate(open(self.dir / filename)):
-                rc.append(parser.parse(line.strip()))
+                rc.append(parser.parse(line[:-1]))
             return rc
 
         except RegexException as ex:
