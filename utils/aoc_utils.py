@@ -36,6 +36,15 @@ class Parser:
         return line
 
 
+class OneLineParser(Parser):
+    def parse(self, line: str, strip: bool = True) -> Any:
+
+        if strip:
+            return line.strip()
+
+        return line
+
+
 class IntParser(Parser):
     def parse(self, line: str, strip: bool = True) -> Any:
 
@@ -127,6 +136,13 @@ class Day:
             case str(input):
                 start = datetime.datetime.now()
                 answer = fn(input)
+                elapsed = datetime.datetime.now() - start
+
+            case OneLineParser():
+                start = datetime.datetime.now()
+                answer = fn(
+                    self.multi_line_input(filename=infile, parser=input_method)[0]
+                )
                 elapsed = datetime.datetime.now() - start
 
             case Parser():
