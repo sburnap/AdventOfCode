@@ -52,9 +52,15 @@ class IntParser(Parser):
 
 
 class MapParser(Parser):
-    def parse(self, line, strip: bool = True) -> Any:
+    def __init__(self, integer=False):
+        self.integer = integer
 
-        return [ch for ch in line]
+    def parse(self, line, strip: bool = True) -> list[int | str]:
+
+        if self.integer:
+            return [int(ch) for ch in line.strip()]
+        else:
+            return [ch for ch in line.strip()]
 
 
 class RegexParser(Parser):
