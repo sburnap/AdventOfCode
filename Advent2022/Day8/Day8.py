@@ -1,8 +1,8 @@
-from typing import Optional
+from typing import Optional, Generator
 
 import aoc_utils as au
 
-Map = list[list[str]]
+Map = list[list[int]]
 
 
 def is_visible(map: Map, x: int, y: int) -> bool:
@@ -19,6 +19,7 @@ def is_visible(map: Map, x: int, y: int) -> bool:
     )
 
 
+# expect 21
 def test_one(map: Map) -> Optional[int]:
 
     return sum(
@@ -29,6 +30,7 @@ def test_one(map: Map) -> Optional[int]:
     )
 
 
+# expect 1708
 def part_one(map: Map) -> Optional[int]:
     return sum(
         [
@@ -38,41 +40,29 @@ def part_one(map: Map) -> Optional[int]:
     )
 
 
+def visible_line(trees: list[int], height: int) -> Generator[int, None, None]:
+
+    for tree in trees:
+        yield tree
+        if height <= tree:
+            break
+
+
 def scenic_score(map: Map, x: int, y: int) -> int:
-    sc1 = 0
-    x1 = x - 1
-    while x1 >= 0:
-        sc1 += 1
-        if map[y][x1] >= map[y][x]:
-            break
-        x1 -= 1
-
-    sc2 = 0
-    x1 = x + 1
-    while x1 < len(map[0]):
-        sc2 += 1
-        if map[y][x1] >= map[y][x]:
-            break
-        x1 += 1
-
-    sc3 = 0
-    y1 = y - 1
-    while y1 >= 0:
-        sc3 += 1
-        if map[y1][x] >= map[y][x]:
-            break
-        y1 -= 1
-
-    sc4 = 0
-    y1 = y + 1
-    while y1 < len(map):
-        sc4 += 1
-        if map[y1][x] >= map[y][x]:
-            break
-        y1 += 1
-    return sc1 * sc2 * sc3 * sc4
+    height = map[y][x]
+    return (
+        len(list(visible_line([map[y][x1] for x1 in range(x - 1, -1, -1)], height)))
+        * len(
+            list(visible_line([map[y][x1] for x1 in range(x + 1, len(map[0]))], height))
+        )
+        * len(list(visible_line([map[y1][x] for y1 in range(y - 1, -1, -1)], height)))
+        * len(
+            list(visible_line([map[y1][x] for y1 in range(y + 1, len(map[0]))], height))
+        )
+    )
 
 
+# expect 8
 def test_two(map: Map) -> Optional[int]:
     return max(
         [
@@ -82,6 +72,7 @@ def test_two(map: Map) -> Optional[int]:
     )
 
 
+# expect 504000
 def part_two(map: Map) -> Optional[int]:
     return max(
         [

@@ -40,13 +40,11 @@ def do_moves(moves: list[Move], length: int = 2) -> int:
                 diffy = rope[i].y - rope[i + 1].y
                 diffx = rope[i].x - rope[i + 1].x
 
-                if abs(diffy) >= 2 and abs(diffx) == 0:
-                    rope[i + 1].y += diffy // abs(diffy)
-                elif abs(diffx) >= 2 and abs(diffy) == 0:
-                    rope[i + 1].x += diffx // abs(diffx)
-                elif abs(diffy) >= 2 or abs(diffx) >= 2:
-                    rope[i + 1].y += diffy // abs(diffy)
-                    rope[i + 1].x += diffx // abs(diffx)
+                if abs(diffy) > 1 or abs(diffx) > 1:
+                    if abs(diffy) > 0:
+                        rope[i + 1].y += diffy // abs(diffy)
+                    if abs(diffx) > 0:
+                        rope[i + 1].x += diffx // abs(diffx)
 
             visited.add(f"{rope[-1].x},{rope[-1].y}")
 
@@ -57,6 +55,7 @@ def test_one(moves: list[Move]) -> Optional[int]:
     return do_moves(moves)
 
 
+# expected 6464
 def part_one(moves: list[Move]) -> Optional[int]:
     return do_moves(moves)
 
@@ -65,6 +64,7 @@ def test_two(moves: list[Move]) -> Optional[int]:
     return do_moves(moves, 10)
 
 
+# expect 2604
 def part_two(moves: list[Move]) -> Optional[int]:
     return do_moves(moves, 10)
 
