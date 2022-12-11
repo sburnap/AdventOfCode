@@ -41,6 +41,29 @@ class Monkey:
         self.falsetarget: int
         self.inspect = 0
 
+    def inspect_item(self, item: int) -> int:
+        self.inspect += 1
+
+        match self.op.target:
+            case str():
+                val = item
+            case int() as i:
+                val = i
+
+        match self.op.op:
+            case "+":
+                return item + val
+            case "*":
+                return item * val
+            case _:
+                raise Exception(f"Bad opcode {self.op.op} encountered")
+
+    def target(self, worry: int) -> int:
+        return self.truetarget if worry % self.divisor == 0 else self.falsetarget
+
+    def add_item(self, worry: int) -> None:
+        self.items.append(worry)
+
     def __repr__(self):
         return f"Monkey {self.number} has {self.items}"
 
@@ -86,30 +109,14 @@ def do_tossing(
     for _ in range(rounds):
         for monkey in monkeys:
             for item in monkey.items:
-                monkey.inspect += 1
-
-                match monkey.op.target:
-                    case str():
-                        val = item
-                    case int() as i:
-                        val = i
-
-                match monkey.op.op:
-                    case "+":
-                        worry = item + val
-                    case "*":
-                        worry = item * val
+                worry = monkey.inspect_item(item)
 
                 if worry_div:
                     worry = worry // worry_div
                 else:
                     worry %= modulo
 
-                monkeys[
-                    monkey.truetarget
-                    if worry % monkey.divisor == 0
-                    else monkey.falsetarget
-                ].items.append(worry)
+                monkeys[monkey.target(worry)].add_item(worry)
 
             monkey.items = []
 
