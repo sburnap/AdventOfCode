@@ -8,12 +8,14 @@ from datetime import timedelta
 TestFunction = Union[
     Callable[[list[Any]], Optional[str | int]],
     Callable[[str], Optional[str | int]],
+    Callable[[int], Optional[str | int]],
 ]
 
 
 AnswerFunction = Union[
     Callable[[list[Any]], Optional[str | int]],
     Callable[[str], Optional[str | int]],
+    Callable[[int], Optional[str | int]],
 ]
 FormFunction = Callable[[list[str]], Any]
 Map = list[list[str]]
@@ -91,8 +93,8 @@ class Day:
         test_two: Optional[TestFunction],
         part_one: AnswerFunction,
         part_two: AnswerFunction,
-        test_input: Optional[list[str] | str | Parser] = None,
-        input: list[str] | str | Parser = Parser(),
+        test_input: Optional[list[str] | str | int | Parser] = None,
+        input: list[str] | str | int | Parser = Parser(),
     ):
         self.year = year
         self.day = day
@@ -123,7 +125,7 @@ class Day:
         print()
 
     def runner(
-        self, fn, infile: str, input_method: str | list[str] | Parser
+        self, fn, infile: str, input_method: str | int | list[str] | Parser
     ) -> tuple[Any, timedelta]:
 
         match input_method:
@@ -139,7 +141,7 @@ class Day:
                     )
                 answer = None
 
-            case str(input):
+            case str(input) | int(input):
                 start = datetime.datetime.now()
                 answer = fn(input)
                 elapsed = datetime.datetime.now() - start
