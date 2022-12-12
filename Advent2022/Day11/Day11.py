@@ -108,8 +108,8 @@ def do_tossing(
 
     for _ in range(rounds):
         for monkey in monkeys:
-            for item in monkey.items:
-                worry = monkey.inspect_item(item)
+            while monkey.items:
+                worry = monkey.inspect_item(monkey.items.pop())
 
                 if worry_div:
                     worry = worry // worry_div
@@ -117,8 +117,6 @@ def do_tossing(
                     worry %= modulo
 
                 monkeys[monkey.target(worry)].add_item(worry)
-
-            monkey.items = []
 
     inspects = sorted(monkey.inspect for monkey in monkeys)
     return inspects[-1] * inspects[-2]
