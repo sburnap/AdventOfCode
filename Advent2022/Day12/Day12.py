@@ -10,7 +10,7 @@ class Position:
     y: int
 
 
-class DikjstraData:
+class DijkstraData:
     def __init__(self, width: int, height: int):
         self.data: list[list[Optional[int]]] = [
             [None for _ in range(width)] for _ in range(height)
@@ -22,7 +22,7 @@ class DikjstraData:
     def get(self, x: int, y: int) -> int:
         if (rc := self.data[y][x]) is not None:
             return rc
-        raise Exception("Attempt to read unset DikjstraData")
+        raise Exception("Attempt to read unset DijkstraData")
 
     def set(self, x: int, y: int, val: int):
         self.data[y][x] = val
@@ -60,10 +60,10 @@ def adjacent(position: Position, map: Map) -> Generator[Position, None, None]:
 WalkTest = Callable[[str, str], bool]
 
 
-def dijstra(
+def dijkstra(
     map: Map, start: Position, target: str, can_walk: WalkTest
 ) -> Optional[int]:
-    dij = DikjstraData(map.width(), map.height())
+    dij = DijkstraData(map.width(), map.height())
 
     dij.set(start.x, start.y, 0)
 
@@ -108,12 +108,12 @@ def can_walk_up(first: str, second: str) -> bool:
 
 def test_one(input: list[list[str]]) -> Optional[int]:
     map = Map(input)
-    return dijstra(map, find_start(map, "S"), "E", can_walk_up)
+    return dijkstra(map, find_start(map, "S"), "E", can_walk_up)
 
 
 def part_one(input: list[list[str]]) -> Optional[int]:
     map = Map(input)
-    return dijstra(map, find_start(map, "S"), "E", can_walk_up)
+    return dijkstra(map, find_start(map, "S"), "E", can_walk_up)
 
 
 def can_walk_down(first: str, second: str) -> bool:
@@ -122,12 +122,12 @@ def can_walk_down(first: str, second: str) -> bool:
 
 def test_two(input: list[list[str]]) -> Optional[int]:
     map = Map(input)
-    return dijstra(map, find_start(map, "E"), "a", can_walk_down)
+    return dijkstra(map, find_start(map, "E"), "a", can_walk_down)
 
 
 def part_two(input: list[list[str]]) -> Optional[int]:
     map = Map(input)
-    return dijstra(map, find_start(map, "E"), "a", can_walk_down)
+    return dijkstra(map, find_start(map, "E"), "a", can_walk_down)
 
 
 if __name__ == "__main__":
