@@ -24,23 +24,25 @@ def adjacent(position: Position, map: Map) -> Generator[Position, None, None]:
         yield Position(position.x, position.y + 1)
 
 
-def find_start_end(map: Map) -> tuple[tuple[int, int], tuple[int, int]]:
-    for y in range(len(map)):
-        for x in range(len(map[0])):
-            if map[y][x] == "S":
-                start = (x, y)
-                map[y][x] = "a"
-            if map[y][x] == "E":
-                end = (x, y)
-                map[y][x] = "z"
-
-    return start, end
-
-
 WalkTest = Callable[[str, str], bool]
 
 
-def dijstra(map: Map, start: Position, target: str, can_walk: WalkTest) -> int:
+class DikjstraData:
+    def __init__(self, width: int, height: int):
+        self.data: list[list[Optional[int]]] = [
+            [None for _ in range(width)] for _ in range(height)
+        ]
+
+    def get(self, x: int, y: int) -> Optional[int]:
+        return self.data[y][x]
+
+    def set(self, x: int, y: int, val: int):
+        self.data[y][x] = val
+
+
+def dijstra(
+    map: Map, start: Position, target: str, can_walk: WalkTest
+) -> Optional[int]:
     dij: list[list[Optional[int]]] = [
         [None for _ in range(len(map[0]))] for _ in range(len(map))
     ]
@@ -54,8 +56,7 @@ def dijstra(map: Map, start: Position, target: str, can_walk: WalkTest) -> int:
             if dij[adj.y][adj.x] is None and can_walk(
                 map[work.y][work.x], map[adj.y][adj.x]
             ):
-                steps = dij[work.y][work.x]
-                dij[adj.y][adj.x] = steps + 1 if steps is not None else 0
+                dij[adj.y][adj.x] = dij[work.y][work.x] + 1
                 work_queue.append(Position(adj.x, adj.y))
                 if map[adj.y][adj.x] == target:
                     return dij[adj.y][adj.x]
@@ -72,44 +73,38 @@ def find_start(map: Map, start: str) -> Position:
     raise Exception("No starting position found")
 
 
+def true_height(height: str) -> str:
+    match height:
+        case "S":
+            return "a"
+        case "E":
+            return "z"
+        case _:
+            return height
+
+
 def can_walk_up(first: str, second: str) -> bool:
-    if first == "S":
-        first = "a"
-    if second == "E":
-        second = "z"
-    return ord(first) + 1 >= ord(second)
+    return ord(true_height(first)) + 1 >= ord(true_height(second))
 
 
 def test_one(map: Map) -> Optional[int]:
-    start = find_start(map, "S")
-
-    return dijstra(map, start, "E", can_walk_up)
+    return dijstra(map, find_start(map, "S"), "E", can_walk_up)
 
 
 def part_one(map: Map) -> Optional[int]:
-    start = find_start(map, "S")
-
-    return dijstra(map, start, "E", can_walk_up)
+    return dijstra(map, find_start(map, "S"), "E", can_walk_up)
 
 
 def can_walk_down(first: str, second: str) -> bool:
-    if first == "E":
-        first = "z"
-    if second == "S":
-        second = "a"
-    return ord(second) +1 >= ord(first) 
+    return ord(true_height(second)) + 1 >= ord(true_height(first))
 
 
 def test_two(map: Map) -> Optional[int]:
-    start = find_start(map, "E")
-
-    return dijstra(map, start, "a", can_walk_down)
+    return dijstra(map, find_start(map, "E"), "a", can_walk_down)
 
 
 def part_two(map: Map) -> Optional[int]:
-    start = find_start(map, "E")
-
-    return dijstra(map, start, "a", can_walk_down)
+    return dijstra(map, find_start(map, "E"), "a", can_walk_down)
 
 
 if __name__ == "__main__":
