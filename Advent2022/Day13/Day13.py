@@ -1,4 +1,4 @@
-from typing import Optional, Any
+from typing import Optional
 from functools import cmp_to_key
 import json
 
@@ -7,36 +7,27 @@ import aoc_utils as au
 Packet = int | list["Packet"]
 
 
+def force_list(a: Packet) -> Packet:
+    return [a] if type(a) is int else a
+
+
 def compare(first: Packet, second: Packet) -> int:
 
+    # asserts are the only way I can make mypy happy
     assert type(first) == list
     assert type(second) == list
 
     for a, b in zip(first, second):
         if type(a) == int and type(b) == int:
-            if a < b:
-                return 1
-            elif a > b:
-                return -1
-        else:
-            if type(a) == int:
-                a = [a]
-            if type(b) == int:
-                b = [b]
+            if (diff := b - a) != 0:
+                return diff
+        elif (result := compare(force_list(a), force_list(b))) != 0:
+            return result
 
-            if (result := compare(a, b)) != 0:
-                return result
-
-    if len(first) < len(second):
-        return 1
-    elif len(first) > len(second):
-        return -1
-
-    return 0
+    return len(second) - len(first)
 
 
-def test_one(packets: list[Packet | str]) -> Optional[int]:
-
+def sum_right_order(packets: list[Packet]) -> Optional[int]:
     return sum(
         i + 1
         for i, pair in enumerate(zip(packets[::3], packets[1::3]))
@@ -44,36 +35,34 @@ def test_one(packets: list[Packet | str]) -> Optional[int]:
     )
 
 
-def part_one(packets: list[Packet | str]) -> Optional[int]:
-    l1 = [
-        i + 1
-        for i, pair in enumerate(zip(packets[::3], packets[1::3]))
-        if compare(*pair) > 0
-    ]
-    return sum(l1)
+def test_one(packets: list[Packet]) -> Optional[int]:
+    return sum_right_order(packets)
 
 
-def test_two(packets: list[Packet | str]) -> Optional[int]:
+def part_one(packets: list[Packet]) -> Optional[int]:
+    return sum_right_order(packets)
+
+
+def find_signal_spot(packets: list[Packet]) -> Optional[int]:
     ordered = sorted(
-        [packet for packet in packets if type(packet) is Packet] + [[[2]], [[6]]],
+        [packet for packet in packets] + [[[2]], [[6]]],
         key=cmp_to_key(compare),
         reverse=True,
     )
     return (ordered.index([[2]]) + 1) * (ordered.index([[6]]) + 1)
 
 
-def part_two(packets: list[Packet | str]) -> Optional[int]:
-    ordered = sorted(
-        [packet for packet in packets if type(packet) is not str] + [[[2]], [[6]]],
-        key=cmp_to_key(compare),
-        reverse=True,
-    )
-    return (ordered.index([[2]]) + 1) * (ordered.index([[6]]) + 1)
+def test_two(packets: list[Packet]) -> Optional[int]:
+    return find_signal_spot(packets)
+
+
+def part_two(packets: list[Packet]) -> Optional[int]:
+    return find_signal_spot(packets)
 
 
 if __name__ == "__main__":
     signal_parser = au.RegexParser(
-        [(r"^(\[.*\])$", lambda m: json.loads(m[0])), (r"^$", lambda m: "")]
+        [(r"^(\[.*\])$", lambda m: json.loads(m[0])), (r"^$", lambda m: None)]
     )
     day = au.Day(
         2022,
