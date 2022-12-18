@@ -1,6 +1,5 @@
 from typing import Optional, Generator
 from dataclasses import dataclass
-from functools import cmp_to_key
 
 import aoc_utils as au
 
@@ -67,6 +66,7 @@ def find_beacon(sensors: list[Sensor], low: int, high: int) -> Optional[int]:
         if len(merged) == 2:
             x = merged[0][1] + 1
             y = row
+            print(y)
             return (x * 4000000) + y
     return None
 
