@@ -19,108 +19,62 @@ class Valve:
         self.paths: dict[str, list["Valve"]] = {}
 
     def make_path(self, target: "Valve", valves: dict[str, "Valve"]) -> list["Valve"]:
-        if target.name not in self.paths:
+        if target.name in self.paths:
+            return self.paths[target.name]
 
-            worklist: list[list["Valve"]] = [[self]]
+        worklist: list[list["Valve"]] = [[self]]
 
-            while len(worklist) > 0:
-                workitem = worklist.pop(0)
-                self.paths[target.name] = workitem + [target]
-                target.paths[self.name] = [target] + workitem[::-1]
-                if target.name in workitem[-1].tunnels:
-                    break
-                else:
-                    for dest in workitem[-1].tunnels:
-                        worklist.append(workitem + [valves[dest]])
+        while len(worklist) > 0:
+            workitem = worklist.pop(0)
+            self.paths[target.name] = workitem + [target]
+            target.paths[self.name] = [target] + workitem[::-1]
+            if target.name in workitem[-1].tunnels:
+                return self.paths[target.name]
+            else:
+                for dest in workitem[-1].tunnels:
+                    worklist.append(workitem + [valves[dest]])
 
-        return self.paths[target.name]
-
-    def __hash__(self):
-        return hash(f"{self.name}:{self.flow}:{self.tunnels}")
+        raise Exception(f"No path found from {self.name} to {target.name}")
 
     def __repr__(self):
         return f"{self.name} ({self.flow})"
 
 
-def score(path: list[Valve], timeleft: int) -> int:
-    if len(path) + 1 > timeleft:
-        return 0
-    return (
-        max(0, (timeleft - len(path)) * path[-1].flow) * len(path[-1].tunnels)
-    ) // len(path)
-
-
-def nextone(
-    start: Valve, valves: dict[str, Valve], targets: set[Valve], timeleft: int
-) -> tuple[Optional[Valve], int]:
-
-    potentials = [start.make_path(target, valves) for target in targets]
-
-    highscore = 0
-    high: Optional[list[Valve]] = None
+def walk(
+    path: list[Valve],
+    valves: dict[str, Valve],
+    targets: set[Valve],
+    timeleft: int,
+) -> int:
+    potentials = [
+        path[-1].make_path(target, valves) for target in targets if target not in path
+    ]
+    mx = 0
     for potential in potentials:
-        sc = score(potential, timeleft)
-        if sc > highscore:
-            highscore = sc
-            high = potential
-            print(sc, potential)
-
-    print("--")
-    return high[-1] if high else None, timeleft - len(potential) + 1
-
-
-def make_order(
-    valves: dict[str, Valve], targets: set[Valve]
-) -> Generator[Valve, None, None]:
-
-    current: Optional[Valve] = valves["AA"]
-    timeleft = 30
-    while len(targets) > 0 and timeleft > 0:
-        if current:
-            current, timeleft = nextone(current, valves, targets, timeleft)
-        if not current:
-            break
-        yield current
-        targets.discard(current)
-
-
-def score_order(order: list[Valve], valves: dict[str, Valve]) -> int:
-    timeleft = 30
-    releasing = 0
-    pressure = 0
-    current = valves["AA"]
-    while timeleft > 0 and len(order) > 0:
-        path = current.make_path(order.pop(0), valves)
-        if len(path) + 1 < timeleft:
-            pressure += releasing * len(path)
-            timeleft -= len(path)
-            releasing += path[-1].flow
-            # pressure += releasing
-            print(f"Release {path[-1].name} at {30-timeleft}")
-            current = path[-1]
-        else:
-            break
-
-    pressure += releasing * timeleft
-    return pressure
+        if len(potential) < timeleft:
+            newtimeleft = timeleft - (len(potential))
+            amount = (
+                walk(path + [potential[-1]], valves, targets, newtimeleft)
+                + potential[-1].flow * newtimeleft
+            )
+            if amount > mx:
+                mx = amount
+    return mx
 
 
 def test_one(input: list[Valve]) -> Optional[int]:
     valves = {valve.name: valve for valve in input}
     targets = set([valve for valve in input if valve.flow > 0])
 
-    order = list(make_order(valves, targets))
-    print(order)
-    return score_order(order, valves)
+    return walk([valves["AA"]], valves, targets, 30)
 
 
 def part_one(input: list[Valve]) -> Optional[int]:
+
     valves = {valve.name: valve for valve in input}
     targets = set([valve for valve in input if valve.flow > 0])
 
-    order = list(make_order(valves, targets))
-    print(order)
-    return score_order(order, valves)
+    return walk([valves["AA"]], valves, targets, 30)
 
 
 def test_two(input: list[Valve]) -> Optional[int]:
