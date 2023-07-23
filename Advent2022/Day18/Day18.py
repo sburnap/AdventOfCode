@@ -73,18 +73,12 @@ def find_outer_faces(cubes: set[Cube]) -> int:
     minx = miny = minz = 99
     maxx = maxy = maxz = 0
     for cube in cubes:
-        minx = min(minx, cube.x)
-        miny = min(miny, cube.y)
-        minz = min(minz, cube.z)
-        maxx = max(maxx, cube.x)
-        maxy = max(maxy, cube.y)
-        maxz = max(maxz, cube.z)
-    minx -= 1
-    miny -= 1
-    minz -= 1
-    maxx += 1
-    maxy += 1
-    maxz += 1
+        minx = min(minx, cube.x - 1)
+        miny = min(miny, cube.y - 1)
+        minz = min(minz, cube.z - 1)
+        maxx = max(maxx, cube.x + 1)
+        maxy = max(maxy, cube.y + 1)
+        maxz = max(maxz, cube.z + 1)
 
     faces = make_faces(cubes)
     outerfaces: set[Side] = set()

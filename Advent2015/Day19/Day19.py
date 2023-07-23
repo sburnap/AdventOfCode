@@ -57,6 +57,18 @@ def test_one(input: str) -> int:
     return count_rules(input, rules)
 
 
+def tokenize(s: str) -> Generator[str, None, None]:
+
+    token = None
+    for ch in s:
+        if ch.isupper():
+            if token:
+                yield token
+            token = ch
+        elif token:
+            token += ch
+
+
 def part_one(input: list[Rule | str]) -> int:
     rules: RuleSet = list(inp for inp in input if type(inp) == tuple)
 
@@ -108,6 +120,8 @@ def part_two(input: list[Rule | str]) -> int:
     if type(input[-1]) != str:
         raise Exception("Bad input!")
 
+    tokenized = [ch for ch in tokenize(input[-1])]
+    tokens = sorted(set(tokenized))
     rc = find_molecule2(final_target=input[-1], rules=rules, molecule="e")
 
     # rc = find_molecule2(input[-1], rules)
