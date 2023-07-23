@@ -111,7 +111,8 @@ class Day:
             rc = []
 
             for i, line in enumerate(open(self.dir / filename)):
-                rc.append(parser.parse(line))
+                if (parsed := parser.parse(line)) != None:
+                    rc.append(parsed)
             return rc
 
         except RegexException as ex:
