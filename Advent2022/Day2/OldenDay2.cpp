@@ -32,8 +32,9 @@ public:
         return scoremap[them - 'A'][me - 'X'];
     }
 
-    int test_one(char **input, unsigned int length)
+    int test_one(void *inp, unsigned int length)
     {
+        char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)
@@ -41,8 +42,9 @@ public:
         return sm;
     }
 
-    int part_one(char **input, unsigned int length)
+    int part_one(void *inp, unsigned int length)
     {
+        char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)
@@ -50,8 +52,9 @@ public:
         return sm;
     }
 
-    int test_two(char **input, unsigned int length)
+    int test_two(void *inp, unsigned int length)
     {
+        char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)
@@ -59,8 +62,9 @@ public:
         return sm;
     }
 
-    int part_two(char **input, unsigned int length)
+    int part_two(void *inp, unsigned int length)
     {
+        char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)

@@ -11,7 +11,7 @@
 
 using namespace std;
 
-class Day3 : public au::Day
+class Day3 : public au::Day<string>
 {
 private:
     string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -63,28 +63,28 @@ public:
     {
         vector<int> priorities = inboth(input);
 
-        return reduce(priorities.begin(), priorities.end());
+        return accumulate(priorities.begin(), priorities.end(), 0);
     }
 
     int part_one(const vector<string> &input)
     {
         vector<int> priorities = inboth(input);
 
-        return reduce(priorities.begin(), priorities.end());
+        return accumulate(priorities.begin(), priorities.end(), 0);
     }
 
     int test_two(const vector<string> &input)
     {
         vector<int> priorities = in_three(input);
 
-        return reduce(priorities.begin(), priorities.end());
+        return accumulate(priorities.begin(), priorities.end(), 0);
     }
 
     int part_two(const vector<string> &input)
     {
         vector<int> priorities = in_three(input);
 
-        return reduce(priorities.begin(), priorities.end());
+        return accumulate(priorities.begin(), priorities.end(), 0);
     }
 };
 

@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class Day1 : public au::Day
+class Day1 : public au::Day<string>
 {
 private:
     vector<int> collapse(const vector<string> &input)
@@ -26,6 +26,7 @@ private:
                 calories += stoi(line);
         }
 
+        rc.push_back(calories);
         return rc;
     }
 
@@ -48,14 +49,14 @@ public:
     {
         vector<int> elves = collapse(foods);
         sort(elves.begin(), elves.end());
-        return reduce(elves.end() - 3, elves.end());
+        return accumulate(elves.end() - 3, elves.end(), 0);
     }
 
     int part_two(const vector<string> &foods)
     {
         vector<int> elves = collapse(foods);
         sort(elves.begin(), elves.end());
-        return reduce(elves.end() - 3, elves.end());
+        return accumulate(elves.end() - 3, elves.end(), 0);
     }
 };
 

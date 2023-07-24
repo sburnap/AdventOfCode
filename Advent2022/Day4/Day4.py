@@ -46,7 +46,7 @@ if __name__ == "__main__":
     pair_parser = au.RegexParser(
         [
             (
-                "(\d*)-(\d*),(\d*)-(\d*)",
+                r"(\d*)-(\d*),(\d*)-(\d*)",
                 lambda m: (Area(int(m[0]), int(m[1])), Area(int(m[2]), int(m[3]))),
             )
         ]

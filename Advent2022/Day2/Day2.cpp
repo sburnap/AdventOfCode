@@ -9,7 +9,7 @@
 
 using namespace std;
 
-class Day2 : public au::Day
+class Day2 : public au::Day<string>
 {
 private:
     int score(const string &game)

@@ -1,67 +1,89 @@
 #include "aoc_utils.h"
-
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <numeric>
+#include <cstring>
 
 using namespace std;
 
-class Day1 : public au::Day
+int compare_int(const void *a, const void *b)
+{
+    return *(unsigned int *)b - *(unsigned int *)a;
+}
+
+class OldenDay1 : public au::OldenDay
 {
 private:
-    vector<int> collapse(const vector<string> &input)
+    class Calories
     {
-        vector<int> rc;
+    private:
+        int *data;
+        unsigned int entries;
 
-        int calories = 0;
-        for (auto line : input)
+    public:
+        Calories(char **input, unsigned int length) : data(nullptr), entries(0)
         {
-            if (line.empty())
+            data = new int[length];
+            memset(data, 0, length * sizeof(int));
+
+            for (auto i = 0; i < length; i++)
             {
-                rc.push_back(calories);
-                calories = 0;
+                if (input[i][0] == '\0')
+                    entries++;
+                data[entries] += atoi(input[i]);
             }
-            else
-                calories += stoi(line);
+            entries++;
         }
 
-        return rc;
-    }
+        int max()
+        {
+            int mx = 0;
+            for (auto i = 0; i < entries; i++)
+                if (mx < data[i])
+                    mx = data[i];
+
+            return mx;
+        }
+
+        int sum_top_three()
+        {
+            qsort(data, entries, sizeof(int), compare_int);
+            return data[0] + data[1] + data[2];
+        }
+
+        ~Calories()
+        {
+            if (data)
+                delete[] data;
+        }
+    };
 
 public:
-    Day1() : Day(2022, 1) {}
-
-    int test_one(const vector<string> &foods)
+    OldenDay1() : OldenDay(2022, 1)
     {
-        const vector<int> elves = collapse(foods);
-        return *max_element(elves.begin(), elves.end());
     }
 
-    int part_one(const vector<string> &foods)
+    int test_one(void *input, unsigned int length)
     {
-        const vector<int> elves = collapse(foods);
-        return *max_element(elves.begin(), elves.end());
+        return Calories((char **)input, length).max();
     }
 
-    int test_two(const vector<string> &foods)
+    int part_one(void *input, unsigned int length)
     {
-        vector<int> elves = collapse(foods);
-        sort(elves.begin(), elves.end());
-        return reduce(elves.end() - 3, elves.end());
+        return Calories((char **)input, length).max();
     }
 
-    int part_two(const vector<string> &foods)
+    int test_two(void *input, unsigned int length)
     {
-        vector<int> elves = collapse(foods);
-        sort(elves.begin(), elves.end());
-        return reduce(elves.end() - 3, elves.end());
+        return Calories((char **)input, length).sum_top_three();
+    }
+
+    int part_two(void *input, unsigned int length)
+    {
+        return Calories((char **)input, length).sum_top_three();
     }
 };
 
 int main()
 {
-    Day1().run_all(true);
+    OldenDay1().run_all(true);
 
     return 0;
 }

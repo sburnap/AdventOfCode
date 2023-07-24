@@ -4,7 +4,6 @@ import aoc_utils as au
 
 
 def read_elves(foods: list[str]) -> Generator[int, None, None]:
-
     calories = 0
     for food in foods:
         if food == "":
@@ -12,6 +11,8 @@ def read_elves(foods: list[str]) -> Generator[int, None, None]:
             calories = 0
         else:
             calories += int(food)
+
+    yield calories
 
 
 # expected 24000

@@ -27,9 +27,6 @@ public:
 
 class OldenDay3 : public au::OldenDay
 {
-private:
-    string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
 public:
     OldenDay3() : OldenDay(2022, 3) {}
 
@@ -90,24 +87,24 @@ public:
         return sm;
     }
 
-    int test_one(char **input, unsigned int length)
+    int test_one(void *input, unsigned int length)
     {
-        return sum_sides(input, length);
+        return sum_sides((char **)input, length);
     }
 
-    int part_one(char **input, unsigned int length)
+    int part_one(void *input, unsigned int length)
     {
-        return sum_sides(input, length);
+        return sum_sides((char **)input, length);
     }
 
-    int test_two(char **input, unsigned int length)
+    int test_two(void *input, unsigned int length)
     {
-        return sum_triplets(input, length);
+        return sum_triplets((char **)input, length);
     }
 
-    int part_two(char **input, unsigned int length)
+    int part_two(void *input, unsigned int length)
     {
-        return sum_triplets(input, length);
+        return sum_triplets((char **)input, length);
     }
 };
 
