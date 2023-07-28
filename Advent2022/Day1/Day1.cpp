@@ -7,7 +7,7 @@
 
 using namespace std;
 
-class Day1 : public au::Day<string>
+class Day1 : public au::Day<vector<string>>
 {
 private:
     vector<int> collapse(const vector<string> &input)

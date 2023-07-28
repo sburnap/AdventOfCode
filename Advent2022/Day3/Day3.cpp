@@ -11,7 +11,7 @@
 
 using namespace std;
 
-class Day3 : public au::Day<string>
+class Day3 : public au::Day<vector<string>>
 {
 private:
     string letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";

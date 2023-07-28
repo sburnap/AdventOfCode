@@ -35,8 +35,8 @@ def do_orders(stacks: list[list[str]], orders: list[Order], reverse: bool) -> st
     return "".join([stack[0] for stack in stacks])
 
 
+# expected CMZ
 def test_one(input: list[Order | str]) -> Optional[str]:
-
     return do_orders(
         stacks=get_stacks([item for item in input if type(item) == str and item != ""]),
         orders=[item for item in input if type(item) == Order],
@@ -44,6 +44,7 @@ def test_one(input: list[Order | str]) -> Optional[str]:
     )
 
 
+# expected ZSQVCCJLL
 def part_one(input: list[Order | str]) -> Optional[str]:
     return do_orders(
         stacks=get_stacks([item for item in input if type(item) == str and item != ""]),
@@ -52,6 +53,7 @@ def part_one(input: list[Order | str]) -> Optional[str]:
     )
 
 
+# expected MCD
 def test_two(input: list[Order | str]) -> Optional[str]:
     return do_orders(
         stacks=get_stacks([item for item in input if type(item) == str and item != ""]),
@@ -60,6 +62,7 @@ def test_two(input: list[Order | str]) -> Optional[str]:
     )
 
 
+# QZFJRWHGS
 def part_two(input: list[Order | str]) -> Optional[str]:
     return do_orders(
         stacks=get_stacks([item for item in input if type(item) == str and item != ""]),

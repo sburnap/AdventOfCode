@@ -47,7 +47,7 @@ public:
     }
 };
 
-class AreaParser : public au::Parser
+class AreaParser : public au::OldenParser
 {
 private:
     AreaTuple *m_data;
