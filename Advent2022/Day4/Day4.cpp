@@ -47,7 +47,7 @@ public:
     }
 };
 
-class Day4 : public au::Day<AreaTuple>
+class Day4 : public au::Day<vector<AreaTuple>>
 {
 public:
     Day4() : Day(2022, 4) {}
