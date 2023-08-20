@@ -44,30 +44,25 @@ namespace au
         char **data = new char *[length];
         unsigned line = 0;
         for (unsigned int i = 0; i < bytes; i++)
-        {
             if (i == 0 || buffer[i - 1] == '\0')
-            {
-                data[line] = buffer + i;
-                line++;
-            }
-        }
+                data[line++] = buffer + i;
 
         // Handle last line being empty
         if (data[length - 1] == 0)
             length -= 1;
 
-        if (buff1 == nullptr)
-            buff1 = data;
-        else
-            buff2 = data;
-
         if (m_parser)
-        {
-            void *newout = m_parser->parse((void *)data, length);
-            return (void *)newout;
-        }
+            return m_parser->parse((void *)data, length);
 
         return (void *)data;
+    }
+
+    void OldenDay::runner(test_funcptr fp, const char *text, void *input, unsigned int length)
+    {
+        auto start = high_resolution_clock::now();
+        Answer answer = (this->*fp)(input, length);
+        auto time_span = duration_cast<duration<double>>(high_resolution_clock::now() - start);
+        printf("(%5.9f) %s %s\n", time_span.count(), text, answer.text());
     }
 
     void OldenDay::run_all(bool run_tests)
@@ -78,39 +73,30 @@ namespace au
 
         printf("Advent of code for Year %d Day %d\n\n", m_year, m_day);
 
-        high_resolution_clock::time_point start;
-        duration<double> time_span;
-
-        int answer;
+        test_funcptr ptest_one = &OldenDay::test_one;
         if (run_tests)
-        {
-            start = high_resolution_clock::now();
-            answer = test_one(test_input, test_length);
-            time_span = duration_cast<duration<double>>(high_resolution_clock::now() - start);
-            printf("(%5.9f) Test is %d\n", time_span.count(), answer);
-        }
+            runner(&OldenDay::test_one, "Test is", test_input, test_length);
 
-        start = high_resolution_clock::now();
-        answer = part_one(input, input_length);
-        time_span = duration_cast<duration<double>>(high_resolution_clock::now() - start);
-        printf("(%5.9f) Answer for Part One is %d\n", time_span.count(), answer);
+        runner(&OldenDay::part_one, "Answer for Part One is", input, input_length);
 
         printf("\n");
 
-        if (run_tests)
+        if (!m_parser)
         {
-            start = high_resolution_clock::now();
-            answer = test_two(test_input, test_length);
-            time_span = duration_cast<duration<double>>(high_resolution_clock::now() - start);
-            printf("(%5.9f) Test is %d\n", time_span.count(), answer);
+            delete[] (char **)test_input;
+            delete[] (char **)input;
         }
+        test_input = read_file("test_input.txt", &testbuffer, test_length);
+        input = read_file("input.txt", &inputbuffer, input_length);
+        if (run_tests)
+            runner(&OldenDay::test_two, "Test is", test_input, test_length);
 
-        start = high_resolution_clock::now();
-        answer = part_two(input, input_length);
-        time_span = duration_cast<duration<double>>(high_resolution_clock::now() - start);
-        printf("(%5.9f) Answer for Part Two is %d\n", time_span.count(), answer);
+        runner(&OldenDay::part_two, "Answer for Part Two is", input, input_length);
 
-        // delete[] test_input;
-        // delete[] input;
+        if (!m_parser)
+        {
+            delete[] (char **)test_input;
+            delete[] (char **)input;
+        }
     }
 }

@@ -6,6 +6,7 @@
 #include <chrono>
 #include <iomanip>
 #include <functional>
+#include <cstring>
 
 namespace au
 {
@@ -93,6 +94,64 @@ namespace au
         virtual void *parse(void *input, unsigned int length) = 0;
     };
 
+    class Answer
+    {
+    private:
+        char *m_text;
+
+    public:
+        Answer(const char *text) : m_text(nullptr)
+        {
+            m_text = new char[strlen(text) + 1];
+            if (m_text)
+                strcpy(m_text, text); // unsafe
+        }
+
+        Answer(int i) : m_text(nullptr)
+        {
+            m_text = new char[21]; // enough for 64 bits (including sign)
+            if (m_text)
+                sprintf(m_text, "%d", i);
+        }
+
+        Answer(Answer &&other)
+        {
+            if (other.m_text != nullptr)
+            {
+                m_text = other.m_text;
+                other.m_text = nullptr;
+            }
+        }
+
+        Answer &operator=(Answer &&other)
+        {
+            if (m_text != nullptr)
+                delete m_text;
+
+            if (other.m_text != nullptr)
+            {
+                m_text = other.m_text;
+                other.m_text = nullptr;
+            }
+            return *this;
+        }
+
+        ~Answer()
+        {
+            if (m_text != nullptr)
+                delete[] m_text;
+        }
+
+        const char *text()
+        {
+            return m_text;
+        }
+        operator const char *()
+        {
+            return m_text;
+        }
+    };
+
     class OldenDay
     {
     private:
@@ -101,38 +160,37 @@ namespace au
         char *inputbuffer;
         char *testbuffer;
         OldenParser *m_parser;
-        char **buff1;
-        char **buff2;
+
+        typedef Answer (OldenDay::*test_funcptr)(void *, unsigned int);
+
+        void runner(test_funcptr, const char *text, void *input, unsigned int length);
 
     protected:
         void *read_file(const std::string &filename, char **buffer, unsigned int &length);
 
     public:
-        virtual int test_one(void *input, unsigned int length) = 0;
-        virtual int part_one(void *input, unsigned int length) = 0;
-        virtual int test_two(void *input, unsigned int length) = 0;
-        virtual int part_two(void *input, unsigned int length) = 0;
+        virtual Answer test_one(void *input, unsigned int length) = 0;
+        virtual Answer part_one(void *input, unsigned int length) = 0;
+        virtual Answer test_two(void *input, unsigned int length) = 0;
+        virtual Answer part_two(void *input, unsigned int length) = 0;
 
         OldenDay(int year, int day, OldenParser *parser = nullptr) : m_year(year),
                                                                      m_day(day),
                                                                      inputbuffer(nullptr),
                                                                      testbuffer(nullptr),
-                                                                     buff1(nullptr),
-                                                                     buff2(nullptr),
                                                                      m_parser(parser)
         {
         }
 
         ~OldenDay()
         {
-            if (inputbuffer)
-                delete inputbuffer;
-            if (testbuffer)
-                delete testbuffer;
-            if (buff1)
-                delete buff1;
-            if (buff2)
-                delete buff2;
+            if (!m_parser)
+            {
+                if (inputbuffer)
+                    delete inputbuffer;
+                if (testbuffer)
+                    delete testbuffer;
+            }
         }
 
         void run_all(bool run_tests = true);

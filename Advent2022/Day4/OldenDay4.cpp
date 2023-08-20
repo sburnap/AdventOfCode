@@ -56,10 +56,8 @@ public:
     AreaParser() : m_data(nullptr) {}
     ~AreaParser()
     {
-        if (m_data)
-        {
-            delete[] m_data;
-        }
+        // if (m_data)
+        // delete[] m_data;
     }
 
     void *parse(void *inp, unsigned int length)
@@ -68,9 +66,8 @@ public:
         m_data = new AreaTuple[length];
 
         for (unsigned int i = 0; i < length; i++)
-        {
             m_data[i] = AreaTuple(input[i]);
-        }
+
         return (void *)m_data;
     }
 };
@@ -82,7 +79,7 @@ class OldenDay4 : public au::OldenDay
 public:
     OldenDay4() : OldenDay(2022, 4, &parser) {}
 
-    int test_one(void *inp, unsigned int length)
+    au::Answer test_one(void *inp, unsigned int length)
     {
         AreaTuple *input = (AreaTuple *)inp;
 
@@ -91,10 +88,10 @@ public:
             if (input[i].contains())
                 cnt++;
 
-        return cnt;
+        return (au::Answer)cnt;
     }
 
-    int part_one(void *inp, unsigned int length)
+    au::Answer part_one(void *inp, unsigned int length)
     {
         AreaTuple *input = (AreaTuple *)inp;
 
@@ -103,10 +100,10 @@ public:
             if (input[i].contains())
                 cnt++;
 
-        return cnt;
+        return (au::Answer)cnt;
     }
 
-    int test_two(void *inp, unsigned int length)
+    au::Answer test_two(void *inp, unsigned int length)
     {
         AreaTuple *input = (AreaTuple *)inp;
 
@@ -115,10 +112,10 @@ public:
             if (input[i].overlap())
                 cnt++;
 
-        return cnt;
+        return (au::Answer)cnt;
     }
 
-    int part_two(void *inp, unsigned int length)
+    au::Answer part_two(void *inp, unsigned int length)
     {
         AreaTuple *input = (AreaTuple *)inp;
 
@@ -127,7 +124,7 @@ public:
             if (input[i].overlap())
                 cnt++;
 
-        return cnt;
+        return (au::Answer)cnt;
     }
 };
 

@@ -32,44 +32,44 @@ public:
         return scoremap[them - 'A'][me - 'X'];
     }
 
-    int test_one(void *inp, unsigned int length)
+    au::Answer test_one(void *inp, unsigned int length)
     {
         char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)
             sm += score(input[i]);
-        return sm;
+        return (au::Answer)sm;
     }
 
-    int part_one(void *inp, unsigned int length)
+    au::Answer part_one(void *inp, unsigned int length)
     {
         char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)
             sm += score(input[i]);
-        return sm;
+        return (au::Answer)sm;
     }
 
-    int test_two(void *inp, unsigned int length)
+    au::Answer test_two(void *inp, unsigned int length)
     {
         char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)
             sm += score2(input[i]);
-        return sm;
+        return (au::Answer)sm;
     }
 
-    int part_two(void *inp, unsigned int length)
+    au::Answer part_two(void *inp, unsigned int length)
     {
         char **input = (char **)inp;
         auto sm = 0;
 
         for (unsigned int i = 0; i < length; i++)
             sm += score2(input[i]);
-        return sm;
+        return (au::Answer)sm;
     }
 };
 

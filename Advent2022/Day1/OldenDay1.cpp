@@ -60,24 +60,24 @@ public:
     {
     }
 
-    int test_one(void *input, unsigned int length)
+    au::Answer test_one(void *input, unsigned int length)
     {
-        return Calories((char **)input, length).max();
+        return (au::Answer)Calories((char **)input, length).max();
     }
 
-    int part_one(void *input, unsigned int length)
+    au::Answer part_one(void *input, unsigned int length)
     {
-        return Calories((char **)input, length).max();
+        return (au::Answer)Calories((char **)input, length).max();
     }
 
-    int test_two(void *input, unsigned int length)
+    au::Answer test_two(void *input, unsigned int length)
     {
-        return Calories((char **)input, length).sum_top_three();
+        return (au::Answer)Calories((char **)input, length).sum_top_three();
     }
 
-    int part_two(void *input, unsigned int length)
+    au::Answer part_two(void *input, unsigned int length)
     {
-        return Calories((char **)input, length).sum_top_three();
+        return (au::Answer)Calories((char **)input, length).sum_top_three();
     }
 };
 

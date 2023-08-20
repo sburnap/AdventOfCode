@@ -87,24 +87,24 @@ public:
         return sm;
     }
 
-    int test_one(void *input, unsigned int length)
+    au::Answer test_one(void *input, unsigned int length)
     {
-        return sum_sides((char **)input, length);
+        return (au::Answer)sum_sides((char **)input, length);
     }
 
-    int part_one(void *input, unsigned int length)
+    au::Answer part_one(void *input, unsigned int length)
     {
-        return sum_sides((char **)input, length);
+        return (au::Answer)sum_sides((char **)input, length);
     }
 
-    int test_two(void *input, unsigned int length)
+    au::Answer test_two(void *input, unsigned int length)
     {
-        return sum_triplets((char **)input, length);
+        return (au::Answer)sum_triplets((char **)input, length);
     }
 
-    int part_two(void *input, unsigned int length)
+    au::Answer part_two(void *input, unsigned int length)
     {
-        return sum_triplets((char **)input, length);
+        return (au::Answer)sum_triplets((char **)input, length);
     }
 };
 
