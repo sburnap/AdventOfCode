@@ -68,7 +68,9 @@ public:
         for (unsigned int i = 0; i < length; i++)
             m_data[i] = AreaTuple(input[i]);
 
-        return (void *)m_data;
+        delete[] input[0];
+        delete[] input;
+        return m_data;
     }
 };
 

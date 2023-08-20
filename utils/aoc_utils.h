@@ -90,8 +90,25 @@ namespace au
 
     class OldenParser
     {
+    private:
+        char **m_input;
+
     public:
-        virtual void *parse(void *input, unsigned int length) = 0;
+        OldenParser() : m_input(nullptr) {}
+        ~OldenParser()
+        {
+            if (m_input != nullptr)
+            {
+                delete[] m_input[0];
+                delete[] m_input;
+            }
+        }
+
+        virtual void *parse(void *input, unsigned int length)
+        {
+            m_input = (char **)input;
+            return m_input;
+        }
     };
 
     class Answer
@@ -160,6 +177,7 @@ namespace au
         char *inputbuffer;
         char *testbuffer;
         OldenParser *m_parser;
+        OldenParser default_parser;
 
         typedef Answer (OldenDay::*test_funcptr)(void *, unsigned int);
 
@@ -180,17 +198,8 @@ namespace au
                                                                      testbuffer(nullptr),
                                                                      m_parser(parser)
         {
-        }
-
-        ~OldenDay()
-        {
-            if (!m_parser)
-            {
-                if (inputbuffer)
-                    delete inputbuffer;
-                if (testbuffer)
-                    delete testbuffer;
-            }
+            if (parser == nullptr)
+                m_parser = &default_parser;
         }
 
         void run_all(bool run_tests = true);

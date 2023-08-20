@@ -134,6 +134,9 @@ public:
                 data->add_string(m[1].str().c_str(), max_row_length, cur_stack_row++);
             }
         }
+
+        delete[] input[0];
+        delete[] input;
         return data;
     }
 };

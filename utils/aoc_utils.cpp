@@ -26,17 +26,16 @@ namespace au
 
         fseek(fp, 0, SEEK_SET);
 
-        char *buffer = new char[bytes];
-        *input = buffer;
-        const size_t rc = fread(buffer, 1, bytes, fp);
+        *input = new char[bytes];
+        if (0 == fread(*input, 1, bytes, fp))
+            return nullptr;
 
         length = 0;
-        bool ending = true;
         for (unsigned int i = 0; i < bytes; i++)
         {
-            if (buffer[i] == '\n' || buffer[i] == '\r')
+            if ((*input)[i] == '\n' || (*input)[i] == '\r')
             {
-                buffer[i] = '\0';
+                (*input)[i] = '\0';
                 length++;
             }
         }
@@ -44,17 +43,14 @@ namespace au
         char **data = new char *[length];
         unsigned line = 0;
         for (unsigned int i = 0; i < bytes; i++)
-            if (i == 0 || buffer[i - 1] == '\0')
-                data[line++] = buffer + i;
+            if (i == 0 || (*input)[i - 1] == '\0')
+                data[line++] = *input + i;
 
         // Handle last line being empty
         if (data[length - 1] == 0)
             length -= 1;
 
-        if (m_parser)
-            return m_parser->parse((void *)data, length);
-
-        return (void *)data;
+        return m_parser->parse((void *)data, length);
     }
 
     void OldenDay::runner(test_funcptr fp, const char *text, void *input, unsigned int length)
@@ -81,22 +77,9 @@ namespace au
 
         printf("\n");
 
-        if (!m_parser)
-        {
-            delete[] (char **)test_input;
-            delete[] (char **)input;
-        }
-        test_input = read_file("test_input.txt", &testbuffer, test_length);
-        input = read_file("input.txt", &inputbuffer, input_length);
         if (run_tests)
             runner(&OldenDay::test_two, "Test is", test_input, test_length);
 
         runner(&OldenDay::part_two, "Answer for Part Two is", input, input_length);
-
-        if (!m_parser)
-        {
-            delete[] (char **)test_input;
-            delete[] (char **)input;
-        }
     }
 }
