@@ -1,6 +1,5 @@
-from typing import Optional, Any
+from typing import Optional
 from dataclasses import dataclass
-from itertools import combinations
 
 import aoc_utils as au
 
@@ -27,13 +26,15 @@ class FileEntry:
 
 
 def make_path(cwd: list[str], name: str) -> str:
-    return "/".join(cwd) + "/" + name
+    if cwd[-1] == "/":
+        return cwd[-1] + name
+    else:
+        return cwd[-1] + "/" + name
 
 
 def get_dirs(
     shell_stuff: list[ChangeDirCmd | ListDir | DirEntry | FileEntry],
 ) -> dict[str, int]:
-
     dirs = {"/": 0}
     cwd = ["/"]
 
@@ -64,7 +65,6 @@ def get_dirs(
 
 
 def find_space(shell_stuff: list[ChangeDirCmd | ListDir | DirEntry | FileEntry]) -> int:
-
     dirs = get_dirs(shell_stuff)
     return sum([dir for dir in dirs.values() if dir <= 100000])
 
@@ -72,7 +72,6 @@ def find_space(shell_stuff: list[ChangeDirCmd | ListDir | DirEntry | FileEntry])
 def find_space2(
     shell_stuff: list[ChangeDirCmd | ListDir | DirEntry | FileEntry],
 ) -> int:
-
     dirs = get_dirs(shell_stuff)
 
     needed = 30000000 - (70000000 - dirs["/"])
@@ -80,6 +79,7 @@ def find_space2(
     return min([dir for dir in dirs.values() if dir >= needed])
 
 
+# expected 95437
 def test_one(
     shell_stuff: list[ChangeDirCmd | ListDir | DirEntry | FileEntry],
 ) -> Optional[int]:
@@ -91,6 +91,9 @@ def part_one(
     shell_stuff: list[ChangeDirCmd | ListDir | DirEntry | FileEntry],
 ) -> Optional[int]:
     return find_space(shell_stuff)
+
+
+# expected 24933642
 
 
 def test_two(

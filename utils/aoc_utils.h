@@ -10,7 +10,7 @@
 
 namespace au
 {
-    template <class T, class R = int>
+    template <class TEST_INPUT, class RESULT = int>
     class Day
     {
     private:
@@ -34,11 +34,11 @@ namespace au
         const int m_year;
         const int m_day;
 
-        T read_file(const std::string &filename)
+        TEST_INPUT read_file(const std::string &filename)
         {
             std::ifstream inp;
             inp.open(filename);
-            T rc;
+            TEST_INPUT rc;
             if (inp.is_open())
                 for (auto line : S<Line>(inp))
                     rc.push_back(line);
@@ -46,10 +46,10 @@ namespace au
         }
 
     public:
-        virtual R test_one(const T &input) = 0;
-        virtual R part_one(const T &input) = 0;
-        virtual R test_two(const T &input) = 0;
-        virtual R part_two(const T &input) = 0;
+        virtual RESULT test_one(const TEST_INPUT &input) = 0;
+        virtual RESULT part_one(const TEST_INPUT &input) = 0;
+        virtual RESULT test_two(const TEST_INPUT &input) = 0;
+        virtual RESULT part_two(const TEST_INPUT &input) = 0;
 
         template <typename FUNC>
         void runner_func(FUNC func, const std::string &text)
@@ -69,22 +69,22 @@ namespace au
 
         void run_all(bool run_tests = true)
         {
-            T test_input = read_file("test_input.txt");
-            T input = read_file("input.txt");
+            TEST_INPUT test_input = read_file("test_input.txt");
+            TEST_INPUT input = read_file("input.txt");
 
             std::cout << "Advent of code for Year " << m_year << " Day " << m_day << std::endl;
 
             if (run_tests)
-                runner_func(std::bind(&Day<T, R>::test_one, this, test_input), " Test is ");
+                runner_func(std::bind(&Day<TEST_INPUT, RESULT>::test_one, this, test_input), " Test is ");
 
-            runner_func(std::bind(&Day<T, R>::part_one, this, input), " Answer for Part One is ");
+            runner_func(std::bind(&Day<TEST_INPUT, RESULT>::part_one, this, input), " Answer for Part One is ");
 
             std::cout << std::endl;
 
             if (run_tests)
-                runner_func(std::bind(&Day<T, R>::test_two, this, test_input), " Test is ");
+                runner_func(std::bind(&Day<TEST_INPUT, RESULT>::test_two, this, test_input), " Test is ");
 
-            runner_func(std::bind(&Day<T, R>::part_two, this, input), " Answer for Part Two is ");
+            runner_func(std::bind(&Day<TEST_INPUT, RESULT>::part_two, this, input), " Answer for Part Two is ");
         }
     };
 

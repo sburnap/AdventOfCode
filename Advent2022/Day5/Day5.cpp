@@ -14,16 +14,12 @@ public:
     unsigned int source;
     unsigned int dest;
 
-    const static regex rule;
-
     Move(unsigned int _crates,
          unsigned int _source,
          unsigned int _dest) : crates(_crates), source(_source), dest(_dest)
     {
     }
 };
-const regex Move::rule = regex("move (\\d*) from (\\d*) to (\\d*)");
-const regex stack_rule = regex("(.+)");
 
 class Input
 {
@@ -33,14 +29,16 @@ public:
 
     void push_back(const string &str)
     {
+        static const regex stack_re = regex("(.+)");
+        static const regex move_re = regex("move (\\d*) from (\\d*) to (\\d*)");
 
         smatch m;
-        if (regex_match(str, m, Move::rule))
+        if (regex_match(str, m, move_re))
         {
             moves.push_back(
                 Move(stoi(m[1].str()), stoi(m[2].str()), stoi(m[3].str())));
         }
-        else if (regex_match(str, m, stack_rule))
+        else if (regex_match(str, m, stack_re))
         {
             stack_rows.push_back(str);
         }
@@ -133,12 +131,6 @@ public:
         do_moves2(stacks, input.moves);
         return get_top(stacks);
     }
-};
-
-class MyParser
-{
-public:
-    virtual void *parse(void *input, unsigned int length) = 0;
 };
 
 int main()
