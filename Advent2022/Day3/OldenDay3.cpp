@@ -76,7 +76,7 @@ public:
             }
 
             unsigned int all = 0;
-            for (auto j = 0; j < strlen(input[i + 2]); j++)
+            for (auto j = 0; j < strlen(input[i + 4]); j++)
             {
                 auto val = letter_to_uint(input[i + 2][j]);
                 if (two.get(val))

@@ -4,9 +4,8 @@
 
 using namespace std;
 
-class Move
+struct Move
 {
-public:
     unsigned int crates;
     unsigned int source;
     unsigned int dest;
