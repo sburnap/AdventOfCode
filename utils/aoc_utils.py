@@ -3,6 +3,7 @@ import pathlib
 import datetime
 import re
 from enum import Enum
+from os.path import exists
 from datetime import timedelta
 
 TestFunction = Union[
@@ -31,7 +32,6 @@ class ParsingException(Exception):
 
 class Parser:
     def parse(self, line: str, strip: bool = True) -> Any:
-
         if strip:
             return line.strip()
 
@@ -40,7 +40,6 @@ class Parser:
 
 class OneLineParser(Parser):
     def parse(self, line: str, strip: bool = True) -> Any:
-
         if strip:
             return line.strip()
 
@@ -49,7 +48,6 @@ class OneLineParser(Parser):
 
 class IntParser(Parser):
     def parse(self, line: str, strip: bool = True) -> Any:
-
         return int(line.strip())
 
 
@@ -58,7 +56,6 @@ class MapParser(Parser):
         self.integer = integer
 
     def parse(self, line, strip: bool = True) -> list[int | str]:
-
         if self.integer:
             return [int(ch) for ch in line.strip()]
         else:
@@ -70,7 +67,6 @@ class RegexParser(Parser):
         self.regexes = [(re.compile(regex[0]), regex[1]) for regex in regexes]
 
     def parse(self, line, strip: bool = True) -> Any:
-
         for regex, form in self.regexes:
             if m := regex.match(line):
                 if form:
@@ -128,7 +124,6 @@ class Day:
     def runner(
         self, fn, infile: str, input_method: str | int | list[str] | Parser
     ) -> tuple[Any, timedelta]:
-
         match input_method:
             case [*input]:
                 for line in input:
@@ -163,9 +158,9 @@ class Day:
                 raise ParsingException(f"Unknown data input type {input_method}")
         return answer, elapsed
 
-    def test_it(self, fn) -> None:
+    def test_it(self, fn, filename="test_input.txt") -> None:
         if fn:
-            answer, elapsed = self.runner(fn, "test_input.txt", self.test_input)
+            answer, elapsed = self.runner(fn, filename, self.test_input)
             if answer:
                 print(f"({elapsed}) Test is {answer if answer else 'I Dunno'}")
 
@@ -180,5 +175,10 @@ class Day:
         self.run_it(self.part_one, "Part One")
         print()
         if run_tests:
-            self.test_it(self.test_two)
+            self.test_it(
+                self.test_two,
+                filename="test_input2.txt"
+                if exists(self.dir / "test_input2.txt")
+                else "test_input.txt",
+            )
         self.run_it(self.part_two, "Part Two")
