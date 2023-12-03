@@ -1,8 +1,7 @@
-from typing import Any, Callable, Union, Optional, Tuple
+from typing import Any, Callable, Union, Optional
 import pathlib
 import datetime
 import re
-from enum import Enum
 from os.path import exists
 from datetime import timedelta
 
@@ -107,7 +106,7 @@ class Day:
             rc = []
 
             for i, line in enumerate(open(self.dir / filename)):
-                if (parsed := parser.parse(line)) != None:
+                if (parsed := parser.parse(line)) is not None:
                     rc.append(parsed)
             return rc
 
@@ -131,9 +130,9 @@ class Day:
                     answer = fn(line)
                     elapsed = datetime.datetime.now() - start
                     print(
-                        f"({elapsed}) Test: {answer if answer is not None else 'None':<10} <- [ {line} ]"[
-                            :100
-                        ]
+                        f"({elapsed}) Test: "
+                        "{answer if answer is not None else 'None':<10}"
+                        " <- [ {line} ]"[:100]
                     )
                 answer = None
 

@@ -15,44 +15,39 @@ digits = {
 }
 
 
-def first_digit(s: str, use_english: bool) -> str:
+def eval_as_digit(s: str, use_english: bool) -> Optional[str]:
+    if s[0].isdigit():
+        return s[0]
+    elif use_english:
+        for name in digits:
+            if s.startswith(name):
+                return str(digits[name])
+    return None
+
+
+def first_digit(s: str, use_english: bool = False) -> str:
     for i in range(len(s)):
-        if s[i].isdigit():
-            return s[i]
-        elif use_english:
-            for name in digits:
-                if s[i:].startswith(name):
-                    return str(digits[name])
-
-    return None
+        if (digit := eval_as_digit(s[i:], use_english)) is not None:
+            return digit
 
 
-def last_digit(s: str, use_english: bool) -> str:
+def last_digit(s: str, use_english: bool = False) -> str:
     for i in range(len(s) - 1, -1, -1):
-        if s[i].isdigit():
-            return s[i]
-        elif use_english:
-            for name in digits:
-                if s[i:].startswith(name):
-                    return str(digits[name])
-
-    return None
+        if (digit := eval_as_digit(s[i:], use_english)) is not None:
+            return digit
 
 
+# expect 142
 def test_one(lines: list[str]) -> Optional[int]:
-    return sum(
-        int(first_digit(line, use_english=False) + last_digit(line, use_english=False))
-        for line in lines
-    )
+    return sum(int(first_digit(line) + last_digit(line)) for line in lines)
 
 
+# expect 54573
 def part_one(lines: list[str]) -> Optional[int]:
-    return sum(
-        int(first_digit(line, use_english=False) + last_digit(line, use_english=False))
-        for line in lines
-    )
+    return sum(int(first_digit(line) + last_digit(line)) for line in lines)
 
 
+# expect 281
 def test_two(lines: list[str]) -> Optional[int]:
     return sum(
         int(first_digit(line, use_english=True) + last_digit(line, use_english=True))
@@ -60,6 +55,7 @@ def test_two(lines: list[str]) -> Optional[int]:
     )
 
 
+# expect 54591
 def part_two(lines: list[str]) -> Optional[int]:
     return sum(
         int(first_digit(line, use_english=True) + last_digit(line, use_english=True))

@@ -20,7 +20,6 @@ class Location:
 
 
 def do_moves(moves: list[Move], length: int = 2) -> int:
-
     visited: set[str] = set()
     rope = [Location(0, 0) for _ in range(length)]
 
@@ -71,7 +70,7 @@ def part_two(moves: list[Move]) -> Optional[int]:
 
 if __name__ == "__main__":
     move_parser = au.RegexParser(
-        [("^(D|U|R|L) (\d*)$", lambda m: Move(m[0], int(m[1])))]
+        [(r"^(D|U|R|L) (\d*)$", lambda m: Move(m[0], int(m[1])))]
     )
     day = au.Day(
         2022,
